@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33205.214
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Owl.cli", "Owl.cli\Owl.cli.fsproj", "{D3A87DBB-6BD3-43A2-B62C-24C220F2B422}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D3A87DBB-6BD3-43A2-B62C-24C220F2B422}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D3A87DBB-6BD3-43A2-B62C-24C220F2B422}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D3A87DBB-6BD3-43A2-B62C-24C220F2B422}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D3A87DBB-6BD3-43A2-B62C-24C220F2B422}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {96BE1DF0-5886-480F-A101-53CCE7F109BE}
+	EndGlobalSection
+EndGlobal
