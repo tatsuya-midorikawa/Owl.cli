@@ -4,6 +4,8 @@ open System
 open System.Diagnostics
 open System.Text
 
+[<System.Runtime.Versioning.SupportedOSPlatform("Windows")>]
+// [<System.Runtime.Versioning.SupportedOSPlatform("MacCatalyst")>]
 let private cmd = Environment.GetEnvironmentVariable "ComSpec"
 
 let internal chain (cmds: seq<string>) = [| cmds |> String.concat " >> " |]
@@ -43,15 +45,15 @@ let exec (cmds: seq<string>) =
   p.WaitForExit()
   stdout.ToString()
 
-let exec' (cmds: seq<string>) =
-  let pi = ProcessStartInfo (cmd, 
-    // enable commnads input and reading of output
-    UseShellExecute = false,
-    RedirectStandardInput = true,
-    RedirectStandardOutput = true,
-    // hide console window
-    CreateNoWindow = true)
+// let exec' (cmds: seq<string>) =
+//   let pi = ProcessStartInfo (cmd, 
+//     // enable commnads input and reading of output
+//     UseShellExecute = false,
+//     RedirectStandardInput = true,
+//     RedirectStandardOutput = true,
+//     // hide console window
+//     CreateNoWindow = true)
 
-  let p = proc.start pi
-  for cmd in cmds do p.exec cmd
-  p
+//   let p = proc.start pi
+//   for cmd in cmds do p.exec cmd
+//   p

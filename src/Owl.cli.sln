@@ -5,6 +5,10 @@ VisualStudioVersion = 17.4.33205.214
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Owl.cli", "Owl.cli\Owl.cli.fsproj", "{D3A87DBB-6BD3-43A2-B62C-24C220F2B422}"
 EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Owl.cli.test", "Owl.cli.test\Owl.cli.test.fsproj", "{C8E1CEDF-E1D1-4D82-9396-7FAC999513E2}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Owl.cli.console", "Owl.cli.console\Owl.cli.console.fsproj", "{96894FAC-3D81-40DE-AED3-735E777E8F18}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +19,14 @@ Global
 		{D3A87DBB-6BD3-43A2-B62C-24C220F2B422}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D3A87DBB-6BD3-43A2-B62C-24C220F2B422}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D3A87DBB-6BD3-43A2-B62C-24C220F2B422}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C8E1CEDF-E1D1-4D82-9396-7FAC999513E2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C8E1CEDF-E1D1-4D82-9396-7FAC999513E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C8E1CEDF-E1D1-4D82-9396-7FAC999513E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C8E1CEDF-E1D1-4D82-9396-7FAC999513E2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{96894FAC-3D81-40DE-AED3-735E777E8F18}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{96894FAC-3D81-40DE-AED3-735E777E8F18}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{96894FAC-3D81-40DE-AED3-735E777E8F18}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{96894FAC-3D81-40DE-AED3-735E777E8F18}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
