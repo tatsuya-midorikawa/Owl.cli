@@ -6,7 +6,8 @@ module Zsh =
   open System.Text
 
   [<Literal>]
-  let private zsh' = "/System/Applications/Utilities/Terminal.app/Contents/MacOS/Terminal"
+  let private zsh' = "/bin/zsh"
+  // let private zsh' = "/System/Applications/Utilities/Terminal.app/Contents/MacOS/Terminal"
 
   let exec (cmds: seq<string>) =
     use p = 
