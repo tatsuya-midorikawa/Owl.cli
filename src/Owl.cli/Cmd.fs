@@ -66,35 +66,39 @@ module Cmd =
   
   [<System.Runtime.Versioning.SupportedOSPlatform("Windows")>]
   type CmdBuilder () =
+    let ignore' = [| "\f"; "\r"; "\n";  "\r\n"; "";  |]
     let prc' = Process.Start psi'
     let stdout' = StringBuilder()
-    let mutable cnt = 0
+    let mutable cnt = 0L
     do
       prc'.OutputDataReceived.Add (fun e ->
-        if 3 < cnt && e.Data <> "" && e.Data <> null then 
+        if 3L < cnt && ignore'|> Array.contains e.Data |> not && e.Data <> null then 
           stdout'.AppendLine e.Data |> ignore
-        cnt <- cnt + 1
+        cnt <- cnt + 1L
       )
       prc'.BeginOutputReadLine()
 
-    member __.Yield (_) = __
-    //member __.Zero () = ()
-      //prc.StandardInput.WriteLine "exit"
-      //prc.WaitForExit()
-      //stdout'.ToString ()
+    member __.Yield (_) = __      
 
-    [<CustomOperation("ls")>]
-    member __.ls (_, path: string) =
-      task { do! prc'.StandardInput.WriteLineAsync $"dir \"{path}\""} |> Task.WaitAll
-    [<CustomOperation("dir")>]
-    member __.dir (_, path: string) =
-      task { do! prc'.StandardInput.WriteLineAsync $"dir \"{path}\""} |> Task.WaitAll
+    [<CustomOperation("exec")>]
+    member __.exec (_, cmd: string) =
+      task { do! prc'.StandardInput.WriteLineAsync cmd } |> Task.WaitAll
+      
     [<CustomOperation("cd")>]
     member __.cd (_, path: string) =
-      task { do! prc'.StandardInput.WriteLineAsync $"cd \"{path}\""} |> Task.WaitAll
+      task { do! prc'.StandardInput.WriteLineAsync $"cd \"{path}\"" } |> Task.WaitAll
+    [<CustomOperation("cls")>]
+    member __.cls (_) =
+      task { do! prc'.StandardInput.WriteLineAsync $"cls" } |> Task.WaitAll
+    [<CustomOperation("dir")>]
+    member __.dir (_, path: string) =
+      task { do! prc'.StandardInput.WriteLineAsync $"dir \"{path}\"" } |> Task.WaitAll
+    [<CustomOperation("ls")>]
+    member __.ls (_, path: string) =
+      task { do! prc'.StandardInput.WriteLineAsync $"dir \"{path}\"" } |> Task.WaitAll
     [<CustomOperation("systeminfo")>]
     member __.systeminfo (_) =
-      task { do! prc'.StandardInput.WriteLineAsync $"systeminfo"} |> Task.WaitAll
+      task { do! prc'.StandardInput.WriteLineAsync $"systeminfo" } |> Task.WaitAll
       
     [<CustomOperation("exit")>]
     member __.Exit (_) =

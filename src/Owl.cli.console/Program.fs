@@ -9,7 +9,8 @@ open System
 let s = cmd {
   cd "C:/"
   ls "./"
-  systeminfo
+  //systeminfo
+  exec "cls"
   exit
 }
 
