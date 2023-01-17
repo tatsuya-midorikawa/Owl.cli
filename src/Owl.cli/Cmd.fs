@@ -86,8 +86,9 @@ module Cmd =
     member __.Yield (_) = __
     member __.Result () =
       if state' = Running then
-        __.Exit prc'
-      ()
+        __.exit prc' |> ignore
+      task { do! prc'.WaitForExitAsync () } |> Task.WaitAll
+      stdout'.ToString()
 
     [<CustomOperation("exec")>]
     member __.exec (_, cmd: string) =
@@ -112,7 +113,7 @@ module Cmd =
 
     // === E ===
     [<CustomOperation("exit")>]
-    member __.exit (_) =
+    member __.exit (_: obj) =
       task { do! prc'.StandardInput.WriteLineAsync "exit" } |> Task.WaitAll
       state' <- Stop
       __
@@ -136,7 +137,7 @@ module Cmd =
     // === R ===
     // === S ===
     [<CustomOperation("systeminfo")>]
-    member __.systeminfo (_) =
+    member __.systeminfo (_: obj) =
       task { do! prc'.StandardInput.WriteLineAsync $"systeminfo" } |> Task.WaitAll; __
 
     // === T ===

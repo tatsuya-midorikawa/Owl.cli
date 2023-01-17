@@ -6,12 +6,14 @@ open System
 // Zsh.exec [| "ls ./" |]
 // |> printfn "%s"
 
-let s = cmd {
+let c = cmd {
   cd "C:/"
   ls "./"
-  //systeminfo
+  systeminfo
   exec "cls"
   exit
 }
+
+let s = c.Result()
 
 printfn "%A" s
