@@ -64,13 +64,18 @@ module Cmd =
   //   for cmd in cmds do p.exec cmd
   //   p
   
+  type State = Stop | Running
+
+  // https://learn.microsoft.com/ja-jp/windows-server/administration/windows-commands/windows-commands?source=recommendations
   [<System.Runtime.Versioning.SupportedOSPlatform("Windows")>]
   type CmdBuilder () =
     let ignore' = [| "\f"; "\r"; "\n";  "\r\n"; "";  |]
     let prc' = Process.Start psi'
     let stdout' = StringBuilder()
+    let mutable state' = Stop
     let mutable cnt = 0L
     do
+      state' <- Running
       prc'.OutputDataReceived.Add (fun e ->
         if 3L < cnt && ignore'|> Array.contains e.Data |> not && e.Data <> null then 
           stdout'.AppendLine e.Data |> ignore
@@ -78,36 +83,70 @@ module Cmd =
       )
       prc'.BeginOutputReadLine()
 
-    member __.Yield (_) = __      
+    member __.Yield (_) = __
+    member __.Result () =
+      if state' = Running then
+        __.Exit prc'
+      ()
 
     [<CustomOperation("exec")>]
     member __.exec (_, cmd: string) =
-      task { do! prc'.StandardInput.WriteLineAsync cmd } |> Task.WaitAll
+      task { do! prc'.StandardInput.WriteLineAsync cmd } |> Task.WaitAll; __;
       
+    // === A ===
+
+    // === B ===
+
+    // === C ===
     [<CustomOperation("cd")>]
     member __.cd (_, path: string) =
-      task { do! prc'.StandardInput.WriteLineAsync $"cd \"{path}\"" } |> Task.WaitAll
+      task { do! prc'.StandardInput.WriteLineAsync $"cd \"{path}\"" } |> Task.WaitAll; __;
     [<CustomOperation("cls")>]
     member __.cls (_) =
-      task { do! prc'.StandardInput.WriteLineAsync $"cls" } |> Task.WaitAll
+      task { do! prc'.StandardInput.WriteLineAsync $"cls" } |> Task.WaitAll; __;
+
+    // === D ===
     [<CustomOperation("dir")>]
     member __.dir (_, path: string) =
-      task { do! prc'.StandardInput.WriteLineAsync $"dir \"{path}\"" } |> Task.WaitAll
+      task { do! prc'.StandardInput.WriteLineAsync $"dir \"{path}\"" } |> Task.WaitAll; __;
+
+    // === E ===
+    [<CustomOperation("exit")>]
+    member __.exit (_) =
+      task { do! prc'.StandardInput.WriteLineAsync "exit" } |> Task.WaitAll
+      state' <- Stop
+      __
+
+    // === F ===
+    // === G ===
+    // === H ===
+    // === I ===
+    // === J ===
+    // === K ===
+    // === L ===
     [<CustomOperation("ls")>]
     member __.ls (_, path: string) =
-      task { do! prc'.StandardInput.WriteLineAsync $"dir \"{path}\"" } |> Task.WaitAll
+      task { do! prc'.StandardInput.WriteLineAsync $"dir \"{path}\"" } |> Task.WaitAll; __
+
+    // === M ===
+    // === N ===
+    // === O ===
+    // === P ===
+    // === Q ===
+    // === R ===
+    // === S ===
     [<CustomOperation("systeminfo")>]
     member __.systeminfo (_) =
-      task { do! prc'.StandardInput.WriteLineAsync $"systeminfo" } |> Task.WaitAll
+      task { do! prc'.StandardInput.WriteLineAsync $"systeminfo" } |> Task.WaitAll; __
+
+    // === T ===
+    // === U ===
+    // === V ===
+    // === W ===
+    // === X ===
+    // === Y ===
+    // === Z ===
       
-    [<CustomOperation("exit")>]
-    member __.Exit (_) =
-      task {
-        do! prc'.StandardInput.WriteLineAsync "exit"
-        do! prc'.WaitForExitAsync()
-        return stdout'.ToString ()
-      }
-      |> (fun t -> t.Result)
 
     interface IDisposable with
       member __.Dispose() = prc'.Dispose ()
