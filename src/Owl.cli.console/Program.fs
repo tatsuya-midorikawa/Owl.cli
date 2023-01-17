@@ -1,4 +1,4 @@
-﻿open owl.cli
+﻿open owl.cli.cmd
 open System
 
 
@@ -7,13 +7,13 @@ open System
 // |> printfn "%s"
 
 let c = cmd {
-  cd "C:/"
-  ls "./"
-  systeminfo
-  exec "cls"
+  exec ((cd "C:\\") <&&> dir)
+  exec systeminfo
+  //exec cls
   exit
 }
 
 let s = c.Result()
 
 printfn "%A" s
+printfn ""

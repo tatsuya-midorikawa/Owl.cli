@@ -1,7 +1,7 @@
 ﻿namespace owl.cli
 
-[<AutoOpen>]
-module Cmd =
+//[<AutoOpen>]
+module cmd =
   open System
   open System.Diagnostics
   open System.Text
@@ -17,54 +17,8 @@ module Cmd =
   //let internal chain (cmds: seq<string>) = [| cmds |> String.concat " >> " |]
   //let internal chains (cmds: seq<string[]>) = cmds |> Seq.map (String.concat " >> ")
 
-  //let run'as (wait'for'exit: bool) (cmd: string)  =
-  //  let pi = ProcessStartInfo (cmd, 
-  //    UseShellExecute = true,
-  //    // hide console window
-  //    CreateNoWindow = true,
-  //    // run as adminstrator
-  //    Verb = "runas")
-    
-  //  if wait'for'exit
-  //  then
-  //    use p = Process.Start pi
-  //    p.WaitForExit()
-  //  else
-  //    Process.Start pi |> ignore
-
-  let private exec (cmds: seq<string>) =
-    let pi = ProcessStartInfo (cmd',
-      // enable commnads input and reading of output
-      UseShellExecute = false,
-      RedirectStandardInput = true,
-      RedirectStandardOutput = true,
-      // hide console window
-      CreateNoWindow = true)
-    
-    use p = Process.Start pi
-    let stdout = StringBuilder()
-    p.OutputDataReceived.Add (fun e -> if e.Data <> null then stdout.AppendLine(e.Data) |> ignore)
-    p.BeginOutputReadLine()
-    for cmd in cmds do 
-      p.StandardInput.WriteLine cmd
-    p.StandardInput.WriteLine "exit"
-    p.WaitForExit()
-    stdout.ToString()
-
-  // let exec' (cmds: seq<string>) =
-  //   let pi = ProcessStartInfo (cmd, 
-  //     // enable commnads input and reading of output
-  //     UseShellExecute = false,
-  //     RedirectStandardInput = true,
-  //     RedirectStandardOutput = true,
-  //     // hide console window
-  //     CreateNoWindow = true)
-
-  //   let p = proc.start pi
-  //   for cmd in cmds do p.exec cmd
-  //   p
-  
-  type State = Stop | Running
+  type state = Stop | Running
+  type command = Command of string
 
   // https://learn.microsoft.com/ja-jp/windows-server/administration/windows-commands/windows-commands?source=recommendations
   [<System.Runtime.Versioning.SupportedOSPlatform("Windows")>]
@@ -93,64 +47,75 @@ module Cmd =
     [<CustomOperation("exec")>]
     member __.exec (_, cmd: string) =
       task { do! prc'.StandardInput.WriteLineAsync cmd } |> Task.WaitAll; __;
-      
-    // === A ===
+    [<CustomOperation("exec")>]
+    member __.exec (_, Command cmd) =
+      task { do! prc'.StandardInput.WriteLineAsync cmd } |> Task.WaitAll; __;
 
-    // === B ===
 
-    // === C ===
-    [<CustomOperation("cd")>]
-    member __.cd (_, path: string) =
-      task { do! prc'.StandardInput.WriteLineAsync $"cd \"{path}\"" } |> Task.WaitAll; __;
-    [<CustomOperation("cls")>]
-    member __.cls (_) =
-      task { do! prc'.StandardInput.WriteLineAsync $"cls" } |> Task.WaitAll; __;
-
-    // === D ===
-    [<CustomOperation("dir")>]
-    member __.dir (_, path: string) =
-      task { do! prc'.StandardInput.WriteLineAsync $"dir \"{path}\"" } |> Task.WaitAll; __;
-
-    // === E ===
     [<CustomOperation("exit")>]
     member __.exit (_: obj) =
       task { do! prc'.StandardInput.WriteLineAsync "exit" } |> Task.WaitAll
       state' <- Stop
       __
 
-    // === F ===
-    // === G ===
-    // === H ===
-    // === I ===
-    // === J ===
-    // === K ===
-    // === L ===
-    [<CustomOperation("ls")>]
-    member __.ls (_, path: string) =
-      task { do! prc'.StandardInput.WriteLineAsync $"dir \"{path}\"" } |> Task.WaitAll; __
-
-    // === M ===
-    // === N ===
-    // === O ===
-    // === P ===
-    // === Q ===
-    // === R ===
-    // === S ===
-    [<CustomOperation("systeminfo")>]
-    member __.systeminfo (_: obj) =
-      task { do! prc'.StandardInput.WriteLineAsync $"systeminfo" } |> Task.WaitAll; __
-
-    // === T ===
-    // === U ===
-    // === V ===
-    // === W ===
-    // === X ===
-    // === Y ===
-    // === Z ===
-      
-
     interface IDisposable with
       member __.Dispose() = prc'.Dispose ()
 
   [<System.Runtime.Versioning.SupportedOSPlatform("Windows")>]
   let cmd = new CmdBuilder()
+  
+  // https://learn.microsoft.com/ja-jp/windows-server/administration/windows-commands/windows-commands?source=recommendations
+  (* ///------> *)
+  // === A ===
+
+  // === B ===
+
+  // === C ===
+  let inline cd path = Command $"cd \"{path}\""
+  let cls = Command $"cls"
+
+  // === D ===
+  let dir = Command $"dir"
+  let inline dir' path = Command $"dir \"{path}\""
+
+  // === E ===
+  // === F ===
+  // === G ===
+  // === H ===
+  // === I ===
+  // === J ===
+  // === K ===
+  // === L ===
+  // === M ===
+  // === N ===
+  // === O ===
+  // === P ===
+  // === Q ===
+  // === R ===
+  // === S ===
+  let systeminfo = Command $"systeminfo"
+
+  // === T ===
+  // === U ===
+  // === V ===
+  // === W ===
+  // === X ===
+  // === Y ===
+  // === Z ===
+  (* <------/// *)
+
+  
+  // https://stackoverflow.com/questions/28889954/what-does-do-in-this-batch-file
+  (* ///------> *)
+  // output to a file
+  let inline (.>) (Command fst) (Command snd) = Command $"%s{fst} > %s{snd}"
+  // append output to a file
+  let inline (.>>) (Command fst) (Command snd) = Command $"%s{fst} >> %s{snd}"
+  // separates commands on a line.
+  let inline (<&>) (Command fst) (Command snd) = Command $"%s{fst} & %s{snd}"
+  // executes this command only if previous command's errorlevel is 0.
+  let inline (<&&>) (Command fst) (Command snd) = Command $"%s{fst} && %s{snd}"
+  // input from a file
+  let inline (<.) (Command fst) (Command snd) = Command $"%s{fst} && %s{snd}"
+
+  (* <------/// *)
