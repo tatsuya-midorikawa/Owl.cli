@@ -21,20 +21,38 @@ module cmd =
     let args = match args with Some args -> args |> String.concat " " | None -> ""
     cmd |> Option.map (fun (Command cmd) -> Command $"%s{cmd} %s{args}")
 
+  let escape (s: string) = 
+    if not(s.StartsWith('\"')) then $"\"%s{s}" else s
+    |> (fun s -> if not(s.EndsWith('\"')) then $"%s{s}\"" else s)
+    
+
   // https://stackoverflow.com/questions/28889954/what-does-do-in-this-batch-file
   (* ///------> *)
-  type op = string -> string option -> string
-  type op2 = string -> command option -> string
-  let (.>) : op = fun lhs -> function Some rhs -> $"%s{lhs} > %s{rhs}" | None -> lhs
-  let (.>>) : op = fun lhs -> function Some rhs -> $"%s{lhs} >> %s{rhs}" | None -> lhs
-  let (<&>) : op2 = fun lhs -> function Some (Command rhs) -> $"%s{lhs} & %s{rhs}" | None -> lhs
-  let (<&&>) : op2 = fun lhs -> function Some (Command rhs) -> $"%s{lhs} && %s{rhs}" | None -> lhs
+  type op_str = string -> string option -> string
+  type op_cmd = string -> command option -> string
+  let build_op_str (cmd: string) (dst: string option) (op: op_str option) =
+    match op with Some op -> op cmd dst | None -> cmd
+  let build_op_cmd (cmd1: string) (cmd2: command option) (op: op_cmd option) =
+    match op with Some op -> op cmd1 cmd2 | None -> cmd1
+
+  let (.>) : op_str = fun lhs -> function Some rhs -> $"%s{lhs} > %s{rhs}" | None -> lhs
+  let (.>>) : op_str = fun lhs -> function Some rhs -> $"%s{lhs} >> %s{rhs}" | None -> lhs
+  let (<&>) : op_cmd = fun lhs -> function Some (Command rhs) -> $"%s{lhs} & %s{rhs}" | None -> lhs
+  let (<&&>) : op_cmd = fun lhs -> function Some (Command rhs) -> $"%s{lhs} && %s{rhs}" | None -> lhs
   (* <------/// *)
 
-  let build_op (cmd: string) (dst: string option) (op: op option) =
-    match op with Some op -> op cmd dst | None -> cmd
-  let build_op2 (cmd1: string) (cmd2: command option) (op: op2 option) =
-    match op with Some op -> op cmd1 cmd2 | None -> cmd1
+  type regcmd = Regcmd of string
+  let add = Regcmd "add"
+  let compare = Regcmd "compare"
+  let copy = Regcmd "copy"
+  let delete = Regcmd "delete"
+  let export = Regcmd "export"
+  let import = Regcmd "import"
+  let load = Regcmd "load"
+  let query = Regcmd "query"
+  let restore = Regcmd "restore"
+  let save = Regcmd "save"
+  let unload = Regcmd "unload"
 
   // https://learn.microsoft.com/ja-jp/windows-server/administration/windows-commands/windows-commands?source=recommendations
   [<System.Runtime.Versioning.SupportedOSPlatform("Windows")>]
@@ -84,31 +102,31 @@ module cmd =
     // === B ===
     // === C ===
     [<CustomOperation("cd")>]
-    member __.cd (_, path, ?op: op2, ?cmd2: command, ?args: seq<string>) =
-      let cmd = op |> build_op2 $"cd %s{path}" (combine cmd2 args)
+    member __.cd (_, path, ?op: op_cmd, ?cmd2: command, ?args: string list) =
+      let cmd = op |> build_op_cmd $"cd %s{path}" (combine cmd2 args)
       if state' = Running
       then task { do! prc'.StandardInput.WriteLineAsync cmd } |> Task.WaitAll
       __
 
     [<CustomOperation("cls")>]
-    member __.cls (_, ?op: op2, ?cmd2: command, ?args: seq<string>) =
-      let cmd = op |> build_op2 $"cls" (combine cmd2 args)
+    member __.cls (_, ?op: op_cmd, ?cmd2: command, ?args: string list) =
+      let cmd = op |> build_op_cmd $"cls" (combine cmd2 args)
       if state' = Running
       then task { do! prc'.StandardInput.WriteLineAsync cmd } |> Task.WaitAll
       __
 
     // === D ===
     [<CustomOperation("dir")>]
-    member __.dir (_, ?path: string, ?op: op, ?dst: string) =
+    member __.dir (_, ?path: string, ?op: op_str, ?dst: string) =
       let dir = match path with Some p -> $"dir {p}" | None -> "dir"
-      let cmd = op |> build_op dir dst
+      let cmd = op |> build_op_str dir dst
       if state' = Running
       then task { do! prc'.StandardInput.WriteLineAsync cmd } |> Task.WaitAll
       __
     [<CustomOperation("dir")>]
-    member __.dir (_, ?path: string, ?op: op2, ?cmd2: command, ?args: seq<string>) =
+    member __.dir (_, ?path: string, ?op: op_cmd, ?cmd2: command, ?args: string list) =
       let dir = match path with Some p -> $"dir {p}" | None -> "dir"
-      let cmd = op |> build_op2 dir (combine cmd2 args)
+      let cmd = op |> build_op_cmd dir (combine cmd2 args)
       if state' = Running
       then task { do! prc'.StandardInput.WriteLineAsync cmd } |> Task.WaitAll
       __
@@ -127,10 +145,18 @@ module cmd =
     // === P ===
     // === Q ===
     // === R ===
+    [<CustomOperation("reg")>]
+    member __.reg (_, Regcmd regcmd, args: string list) =
+      let args = args |> List.reduce (fun a b -> $"%s{a} %s{b}")
+      let cmd = $"reg %s{regcmd} %s{args}"
+      if state' = Running
+      then task { do! prc'.StandardInput.WriteLineAsync cmd } |> Task.WaitAll
+      __
+
     // === S ===
     [<CustomOperation("systeminfo")>]
-    member __.systeminfo (_, ?op: op, ?dst: string) =
-      let cmd = op |> build_op $"systeminfo" dst
+    member __.systeminfo (_, ?op: op_str, ?dst: string) =
+      let cmd = op |> build_op_str $"systeminfo" dst
       if state' = Running
       then task { do! prc'.StandardInput.WriteLineAsync cmd } |> Task.WaitAll
       __
