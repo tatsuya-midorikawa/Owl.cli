@@ -41,17 +41,6 @@ module cmd =
   let (<&&>) : op_cmd = fun lhs -> function Some (Command rhs) -> $"%s{lhs} && %s{rhs}" | None -> lhs
   (* <------/// *)
 
-  type RegType = 
-    | REG_SZ = 0 
-    | REG_MULTI_SZ = 1 
-    | REG_DWORD_BIG_ENDIAN = 2 
-    | REG_DWORD = 3
-    | REG_BINARY = 4
-    | REG_DWORD_LITTLE_ENDIAN = 5
-    | REG_LINK = 6
-    | REG_FULL_RESOURCE_DESCRIPTOR = 7
-    | REG_EXPAND_SZ = 8
-
   type AddCmd = AddCmd of string
   type CompareCmd = CompareCmd of string
   type CopyCmd = CopyCmd of string
