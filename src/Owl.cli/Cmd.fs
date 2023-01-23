@@ -41,18 +41,40 @@ module cmd =
   let (<&&>) : op_cmd = fun lhs -> function Some (Command rhs) -> $"%s{lhs} && %s{rhs}" | None -> lhs
   (* <------/// *)
 
-  type regcmd = Regcmd of string
-  let add = Regcmd "add"
-  let compare = Regcmd "compare"
-  let copy = Regcmd "copy"
-  let delete = Regcmd "delete"
-  let export = Regcmd "export"
-  let import = Regcmd "import"
-  let load = Regcmd "load"
-  let query = Regcmd "query"
-  let restore = Regcmd "restore"
-  let save = Regcmd "save"
-  let unload = Regcmd "unload"
+  type RegType = 
+    | REG_SZ = 0 
+    | REG_MULTI_SZ = 1 
+    | REG_DWORD_BIG_ENDIAN = 2 
+    | REG_DWORD = 3
+    | REG_BINARY = 4
+    | REG_DWORD_LITTLE_ENDIAN = 5
+    | REG_LINK = 6
+    | REG_FULL_RESOURCE_DESCRIPTOR = 7
+    | REG_EXPAND_SZ = 8
+
+  type AddCmd = AddCmd of string
+  type CompareCmd = CompareCmd of string
+  type CopyCmd = CopyCmd of string
+  type DeleteCmd = DeleteCmd of string
+  type ExportCmd = ExportCmd of string
+  type ImportCmd = ImportCmd of string
+  type LoadCmd = LoadCmd of string
+  type QueryCmd = QueryCmd of string
+  type RestoreCmd = RestoreCmd of string
+  type SaveCmd = SaveCmd of string
+  type UnloadCmd = UnloadCmd of string
+
+  let add = AddCmd "add"
+  let compare = CompareCmd "compare"
+  let copy = CopyCmd "copy"
+  let delete = DeleteCmd "delete"
+  let export = ExportCmd "export"
+  let import = ImportCmd "import"
+  let load = LoadCmd "load"
+  let query = QueryCmd "query"
+  let restore = RestoreCmd "restore"
+  let save = SaveCmd "save"
+  let unload = UnloadCmd "unload"
 
   // https://learn.microsoft.com/ja-jp/windows-server/administration/windows-commands/windows-commands?source=recommendations
   [<System.Runtime.Versioning.SupportedOSPlatform("Windows")>]
@@ -146,9 +168,76 @@ module cmd =
     // === Q ===
     // === R ===
     [<CustomOperation("reg")>]
-    member __.reg (_, Regcmd regcmd, args: string list) =
-      let args = args |> List.reduce (fun a b -> $"%s{a} %s{b}")
-      let cmd = $"reg %s{regcmd} %s{args}"
+    member __.reg (_, AddCmd addcmd, key, ?args) =
+      let args = match args with Some args -> args |> Seq.reduce (fun a b -> $"%s{a} %s{b}") | _ -> ""
+      let cmd = $"reg %s{addcmd} \"%s{key}\" %s{args}"
+      if state' = Running
+      then task { do! prc'.StandardInput.WriteLineAsync cmd } |> Task.WaitAll
+      __
+    [<CustomOperation("reg")>]
+    member __.reg (_, CompareCmd comparecmd, key1, key2, ?args) =
+      let args = match args with Some args -> args |> Seq.reduce (fun a b -> $"%s{a} %s{b}") | _ -> ""
+      let cmd = $"reg %s{comparecmd} \"%s{key1}\" \"%s{key2}\" %s{args}"
+      if state' = Running
+      then task { do! prc'.StandardInput.WriteLineAsync cmd } |> Task.WaitAll
+      __
+    [<CustomOperation("reg")>]
+    member __.reg (_, CopyCmd copycmd, key1, key2, ?args) =
+      let args = match args with Some args -> args |> Seq.reduce (fun a b -> $"%s{a} %s{b}") | _ -> ""
+      let cmd = $"reg %s{copycmd} \"%s{key1}\" \"%s{key2}\" %s{args}"
+      if state' = Running
+      then task { do! prc'.StandardInput.WriteLineAsync cmd } |> Task.WaitAll
+      __
+    [<CustomOperation("reg")>]
+    member __.reg (_, DeleteCmd deletecmd, key, ?args) =
+      let args = match args with Some args -> args |> Seq.reduce (fun a b -> $"%s{a} %s{b}") | _ -> ""
+      let cmd = $"reg %s{deletecmd} \"%s{key}\" %s{args}"
+      if state' = Running
+      then task { do! prc'.StandardInput.WriteLineAsync cmd } |> Task.WaitAll
+      __
+    [<CustomOperation("reg")>]
+    member __.reg (_, ExportCmd exportcmd, key, filename, ?args) =
+      let args = match args with Some args -> args |> Seq.reduce (fun a b -> $"%s{a} %s{b}") | _ -> ""
+      let cmd = $"reg %s{exportcmd} \"%s{key}\" \"%s{filename}\" %s{args}"
+      if state' = Running
+      then task { do! prc'.StandardInput.WriteLineAsync cmd } |> Task.WaitAll
+      __
+    [<CustomOperation("reg")>]
+    member __.reg (_, ImportCmd importcmd, filename, ?args) =
+      let args = match args with Some args -> args |> Seq.reduce (fun a b -> $"%s{a} %s{b}") | _ -> ""
+      let cmd = $"reg %s{importcmd} \"%s{filename}\" %s{args}"
+      if state' = Running
+      then task { do! prc'.StandardInput.WriteLineAsync cmd } |> Task.WaitAll
+      __
+    [<CustomOperation("reg")>]
+    member __.reg (_, LoadCmd loadcmd, key, filename) =
+      let cmd = $"reg %s{loadcmd} \"%s{key}\" \"%s{filename}\""
+      if state' = Running
+      then task { do! prc'.StandardInput.WriteLineAsync cmd } |> Task.WaitAll
+      __
+    [<CustomOperation("reg")>]
+    member __.reg (_, RestoreCmd restorecmd, key, filename) =
+      let cmd = $"reg %s{restorecmd} \"%s{key}\" \"%s{filename}\""
+      if state' = Running
+      then task { do! prc'.StandardInput.WriteLineAsync cmd } |> Task.WaitAll
+      __
+    [<CustomOperation("reg")>]
+    member __.reg (_, QueryCmd querycmd, key, ?args) =
+      let args = match args with Some args -> args |> Seq.reduce (fun a b -> $"%s{a} %s{b}") | _ -> ""
+      let cmd = $"reg %s{querycmd} \"%s{key}\" %s{args}"
+      if state' = Running
+      then task { do! prc'.StandardInput.WriteLineAsync cmd } |> Task.WaitAll
+      __
+    [<CustomOperation("reg")>]
+    member __.reg (_, SaveCmd savecmd, key, filename, ?args) =
+      let args = match args with Some args -> args |> Seq.reduce (fun a b -> $"%s{a} %s{b}") | _ -> ""
+      let cmd = $"reg %s{savecmd} \"%s{key}\" \"%s{filename}\" %s{args}"
+      if state' = Running
+      then task { do! prc'.StandardInput.WriteLineAsync cmd } |> Task.WaitAll
+      __
+    [<CustomOperation("reg")>]
+    member __.reg (_, UnloadCmd unloadcmd, key) =
+      let cmd = $"reg %s{unloadcmd} \"%s{key}\""
       if state' = Running
       then task { do! prc'.StandardInput.WriteLineAsync cmd } |> Task.WaitAll
       __

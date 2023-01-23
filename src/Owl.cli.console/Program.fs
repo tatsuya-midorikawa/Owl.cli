@@ -8,6 +8,8 @@ open System
 //  exit
 //}
 
+type T = { Name: string; Age: int }
+
 let c = cmd () {
   //dir "." (<&&>) cd' [@"C:\logs"]
   //dir "." (.>>) @"C:\logs\dir.txt"
@@ -16,8 +18,8 @@ let c = cmd () {
   //cd @"C:\logs" (<&&>) dir' [@".\"]
   //systeminfo (.>>) @".\sysinfo.log"
   //reg add [@"HKLM\SOFTWARE\Policies\Microsoft\Midoliy"]
-  reg add [@"HKLM\SOFTWARE\Policies\Microsoft\Midoliy"; "/v Sample"; "/t REG_SZ"; "/d foo" ]
-  reg query [@"HKLM\SOFTWARE\Policies\Microsoft\Midoliy"]
+  reg add @"HKLM\SOFTWARE\Policies\Microsoft\Midoliy" ["/v Sample"; "/t REG_SZ"; "/d foo"]
+  reg query @"HKLM\SOFTWARE\Policies\Microsoft\Midoliy"
   exit
 }
 c.Result() |> printfn "%s"
