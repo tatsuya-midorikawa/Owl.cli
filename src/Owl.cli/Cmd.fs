@@ -25,6 +25,12 @@ module cmd =
     if not(s.StartsWith('\"')) then $"\"%s{s}" else s
     |> (fun s -> if not(s.EndsWith('\"')) then $"%s{s}\"" else s)
     
+  let build_opt args =
+    match args with Some args -> args |> Seq.reduce (fun a b -> $"%s{a} %s{b}") | _ -> ""
+  
+  let build_arg args =
+    args |> Seq.reduce (fun a b -> $"%s{a} %s{b}")
+
 
   // https://stackoverflow.com/questions/28889954/what-does-do-in-this-batch-file
   (* ///------> *)
@@ -96,10 +102,8 @@ module cmd =
       __
 
     [<CustomOperation("exec")>]
-    member __.exec (_, Command cmd) =
-      if state' = Running
-      then task { do! prc'.StandardInput.WriteLineAsync cmd } |> Task.WaitAll
-      __
+    member __.exec (state, Command cmd) =
+      __.exec (state, cmd)
 
     [<CustomOperation("exit")>]
     member __.exit (_: obj) =
@@ -113,34 +117,33 @@ module cmd =
     // === B ===
     // === C ===
     [<CustomOperation("cd")>]
-    member __.cd (_, path, ?op: op_cmd, ?cmd2: command, ?args: string list) =
+    member __.cd (state, path, ?op: op_cmd, ?cmd2: command, ?args: string list) =
       let cmd = op |> build_op_cmd $"cd %s{path}" (combine cmd2 args)
-      if state' = Running
-      then task { do! prc'.StandardInput.WriteLineAsync cmd } |> Task.WaitAll
-      __
+      __.exec (state, cmd)
 
     [<CustomOperation("cls")>]
-    member __.cls (_, ?op: op_cmd, ?cmd2: command, ?args: string list) =
+    member __.cls (state, ?op: op_cmd, ?cmd2: command, ?args: string list) =
       let cmd = op |> build_op_cmd $"cls" (combine cmd2 args)
-      if state' = Running
-      then task { do! prc'.StandardInput.WriteLineAsync cmd } |> Task.WaitAll
-      __
+      __.exec (state, cmd)
+
+    [<CustomOperation("copy")>]
+    member __.copy (state, src, dst) =
+      __.exec (state, $"copy %s{src} %s{dst}")
+    [<CustomOperation("copy")>]
+    member __.copy (state, args, src, dst) =
+      __.exec (state, $"copy %s{build_arg args} %s{src} %s{dst}")
 
     // === D ===
     [<CustomOperation("dir")>]
-    member __.dir (_, ?path: string, ?op: op_str, ?dst: string) =
+    member __.dir (state, ?path: string, ?op: op_str, ?dst: string) =
       let dir = match path with Some p -> $"dir {p}" | None -> "dir"
       let cmd = op |> build_op_str dir dst
-      if state' = Running
-      then task { do! prc'.StandardInput.WriteLineAsync cmd } |> Task.WaitAll
-      __
+      __.exec (state, cmd)
     [<CustomOperation("dir")>]
-    member __.dir (_, ?path: string, ?op: op_cmd, ?cmd2: command, ?args: string list) =
+    member __.dir (state, ?path: string, ?op: op_cmd, ?cmd2: command, ?args: string list) =
       let dir = match path with Some p -> $"dir {p}" | None -> "dir"
       let cmd = op |> build_op_cmd dir (combine cmd2 args)
-      if state' = Running
-      then task { do! prc'.StandardInput.WriteLineAsync cmd } |> Task.WaitAll
-      __
+      __.exec (state, cmd)
 
     // === E ===
     // === F ===
@@ -157,87 +160,44 @@ module cmd =
     // === Q ===
     // === R ===
     [<CustomOperation("reg")>]
-    member __.reg (_, AddCmd addcmd, key, ?args) =
-      let args = match args with Some args -> args |> Seq.reduce (fun a b -> $"%s{a} %s{b}") | _ -> ""
-      let cmd = $"reg %s{addcmd} \"%s{key}\" %s{args}"
-      if state' = Running
-      then task { do! prc'.StandardInput.WriteLineAsync cmd } |> Task.WaitAll
-      __
+    member __.reg (state, AddCmd addcmd, key, ?args) =
+      __.exec (state, $"reg %s{addcmd} \"%s{key}\" %s{build_opt args}")
     [<CustomOperation("reg")>]
-    member __.reg (_, CompareCmd comparecmd, key1, key2, ?args) =
-      let args = match args with Some args -> args |> Seq.reduce (fun a b -> $"%s{a} %s{b}") | _ -> ""
-      let cmd = $"reg %s{comparecmd} \"%s{key1}\" \"%s{key2}\" %s{args}"
-      if state' = Running
-      then task { do! prc'.StandardInput.WriteLineAsync cmd } |> Task.WaitAll
-      __
+    member __.reg (state, CompareCmd comparecmd, key1, key2, ?args) =
+      __.exec (state, $"reg %s{comparecmd} \"%s{key1}\" \"%s{key2}\" %s{build_opt args}")
     [<CustomOperation("reg")>]
-    member __.reg (_, CopyCmd copycmd, key1, key2, ?args) =
-      let args = match args with Some args -> args |> Seq.reduce (fun a b -> $"%s{a} %s{b}") | _ -> ""
-      let cmd = $"reg %s{copycmd} \"%s{key1}\" \"%s{key2}\" %s{args}"
-      if state' = Running
-      then task { do! prc'.StandardInput.WriteLineAsync cmd } |> Task.WaitAll
-      __
+    member __.reg (state, CopyCmd copycmd, key1, key2, ?args) =
+      __.exec (state, $"reg %s{copycmd} \"%s{key1}\" \"%s{key2}\" %s{build_opt args}")
     [<CustomOperation("reg")>]
-    member __.reg (_, DeleteCmd deletecmd, key, ?args) =
-      let args = match args with Some args -> args |> Seq.reduce (fun a b -> $"%s{a} %s{b}") | _ -> ""
-      let cmd = $"reg %s{deletecmd} \"%s{key}\" %s{args}"
-      if state' = Running
-      then task { do! prc'.StandardInput.WriteLineAsync cmd } |> Task.WaitAll
-      __
+    member __.reg (state, DeleteCmd deletecmd, key, ?args) =
+      __.exec (state, $"reg %s{deletecmd} \"%s{key}\" %s{build_opt args}")
     [<CustomOperation("reg")>]
-    member __.reg (_, ExportCmd exportcmd, key, filename, ?args) =
-      let args = match args with Some args -> args |> Seq.reduce (fun a b -> $"%s{a} %s{b}") | _ -> ""
-      let cmd = $"reg %s{exportcmd} \"%s{key}\" \"%s{filename}\" %s{args}"
-      if state' = Running
-      then task { do! prc'.StandardInput.WriteLineAsync cmd } |> Task.WaitAll
-      __
+    member __.reg (state, ExportCmd exportcmd, key, filename, ?args) =
+      __.exec (state, $"reg %s{exportcmd} \"%s{key}\" \"%s{filename}\" %s{build_opt args}")
     [<CustomOperation("reg")>]
-    member __.reg (_, ImportCmd importcmd, filename, ?args) =
-      let args = match args with Some args -> args |> Seq.reduce (fun a b -> $"%s{a} %s{b}") | _ -> ""
-      let cmd = $"reg %s{importcmd} \"%s{filename}\" %s{args}"
-      if state' = Running
-      then task { do! prc'.StandardInput.WriteLineAsync cmd } |> Task.WaitAll
-      __
+    member __.reg (state, ImportCmd importcmd, filename, ?args) =
+      __.exec (state, $"reg %s{importcmd} \"%s{filename}\" %s{build_opt args}")
     [<CustomOperation("reg")>]
-    member __.reg (_, LoadCmd loadcmd, key, filename) =
-      let cmd = $"reg %s{loadcmd} \"%s{key}\" \"%s{filename}\""
-      if state' = Running
-      then task { do! prc'.StandardInput.WriteLineAsync cmd } |> Task.WaitAll
-      __
+    member __.reg (state, LoadCmd loadcmd, key, filename) =
+      __.exec (state, $"reg %s{loadcmd} \"%s{key}\" \"%s{filename}\"")
     [<CustomOperation("reg")>]
-    member __.reg (_, RestoreCmd restorecmd, key, filename) =
-      let cmd = $"reg %s{restorecmd} \"%s{key}\" \"%s{filename}\""
-      if state' = Running
-      then task { do! prc'.StandardInput.WriteLineAsync cmd } |> Task.WaitAll
-      __
+    member __.reg (state, RestoreCmd restorecmd, key, filename) =
+      __.exec (state, $"reg %s{restorecmd} \"%s{key}\" \"%s{filename}\"")
     [<CustomOperation("reg")>]
-    member __.reg (_, QueryCmd querycmd, key, ?args) =
-      let args = match args with Some args -> args |> Seq.reduce (fun a b -> $"%s{a} %s{b}") | _ -> ""
-      let cmd = $"reg %s{querycmd} \"%s{key}\" %s{args}"
-      if state' = Running
-      then task { do! prc'.StandardInput.WriteLineAsync cmd } |> Task.WaitAll
-      __
+    member __.reg (state, QueryCmd querycmd, key, ?args) =
+      __.exec (state, $"reg %s{querycmd} \"%s{key}\" %s{build_opt args}")
     [<CustomOperation("reg")>]
-    member __.reg (_, SaveCmd savecmd, key, filename, ?args) =
-      let args = match args with Some args -> args |> Seq.reduce (fun a b -> $"%s{a} %s{b}") | _ -> ""
-      let cmd = $"reg %s{savecmd} \"%s{key}\" \"%s{filename}\" %s{args}"
-      if state' = Running
-      then task { do! prc'.StandardInput.WriteLineAsync cmd } |> Task.WaitAll
-      __
+    member __.reg (state, SaveCmd savecmd, key, filename, ?args) =
+      __.exec (state, $"reg %s{savecmd} \"%s{key}\" \"%s{filename}\" %s{build_opt args}")
     [<CustomOperation("reg")>]
-    member __.reg (_, UnloadCmd unloadcmd, key) =
-      let cmd = $"reg %s{unloadcmd} \"%s{key}\""
-      if state' = Running
-      then task { do! prc'.StandardInput.WriteLineAsync cmd } |> Task.WaitAll
-      __
+    member __.reg (state, UnloadCmd unloadcmd, key) =
+      __.exec (state, $"reg %s{unloadcmd} \"%s{key}\"")
 
     // === S ===
     [<CustomOperation("systeminfo")>]
-    member __.systeminfo (_, ?op: op_str, ?dst: string) =
+    member __.systeminfo (state, ?op: op_str, ?dst: string) =
       let cmd = op |> build_op_str $"systeminfo" dst
-      if state' = Running
-      then task { do! prc'.StandardInput.WriteLineAsync cmd } |> Task.WaitAll
-      __
+      __.exec (state, cmd)
 
     // === T ===
     // === U ===
