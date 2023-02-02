@@ -19,7 +19,7 @@ let c = cmd () {
   reg query @"HKLM\SOFTWARE\Policies\Microsoft"
   copy "foo" "bar"
   copy ["/v"; "/d";] "src" "dst"
-  netsh trace start
+  netsh trace start ["scenario=InternetClient_dbg";"tracefile=C:\\logs\\protocols.etl"; "capture=yes";"maxSize=500"]
   netsh trace stop
   exit
 }
