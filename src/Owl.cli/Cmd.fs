@@ -58,8 +58,6 @@ module cmd =
   type RestoreCmd = RestoreCmd of string
   type SaveCmd = SaveCmd of string
   type UnloadCmd = UnloadCmd of string
-  type StartCmd = StartCmd of string
-  type StopCmd = StopCmd of string
     
   let add = AddCmd "add"
   let compare = CompareCmd "compare"
@@ -72,13 +70,21 @@ module cmd =
   let restore = RestoreCmd "restore"
   let save = SaveCmd "save"
   let unload = UnloadCmd "unload"
-  let start = StartCmd "start"
-  let stop = StopCmd "stop"
 
   
   type TraceCtx = TraceCtx of string
+  [<RequireQualifiedAccess>]
+  type TraceCmd =
+    | Start of string
+    | Stop of string
+    member __.value = 
+      match __ with
+      | Start c -> c
+      | Stop c -> c
 
   let trace = TraceCtx "trace"
+  let start = TraceCmd.Start "start"
+  let stop = TraceCmd.Stop "stop"
 
   // https://learn.microsoft.com/ja-jp/windows-server/administration/windows-commands/windows-commands?source=recommendations
   [<System.Runtime.Versioning.SupportedOSPlatform("Windows")>]
@@ -168,7 +174,7 @@ module cmd =
     // https://learn.microsoft.com/ja-jp/previous-versions/windows/it-pro/windows-server-2008-R2-and-2008/cc754516(v=ws.10)
     member __.netsh (state, ctx, cmd, args) = __.exec (state, $"netsh %s{ctx} %s{cmd} %s{build_opt args}")
     [<CustomOperation("netsh")>]
-    member __.netsh (state, TraceCtx ctx, StartCmd cmd, ?args) = __.netsh(state, ctx, cmd, args)
+    member __.netsh (state, TraceCtx ctx, cmd: TraceCmd, ?args) = __.netsh(state, ctx, cmd.value, args)
 
     // === O ===
     // === P ===

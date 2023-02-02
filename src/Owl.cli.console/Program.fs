@@ -19,6 +19,8 @@ let c = cmd () {
   reg query @"HKLM\SOFTWARE\Policies\Microsoft"
   copy "foo" "bar"
   copy ["/v"; "/d";] "src" "dst"
+  netsh trace start
+  netsh trace stop
   exit
 }
 c.Result() |> printfn "%s"
