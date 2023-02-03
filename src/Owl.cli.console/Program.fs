@@ -21,6 +21,8 @@ let c = cmd () {
   copy ["/v"; "/d";] "src" "dst"
   netsh trace start ["scenario=InternetClient_dbg";"tracefile=C:\\logs\\protocols.etl"; "capture=yes";"maxSize=500"]
   netsh trace stop
+  psr start ["/output C:\\logs\\psr.zip";"/maxsc 999";"/gui 0"]
+  psr stop
   exit
 }
 c.Result() |> printfn "%s"

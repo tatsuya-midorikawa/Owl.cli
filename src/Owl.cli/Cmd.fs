@@ -58,6 +58,8 @@ module cmd =
   type RestoreCmd = RestoreCmd of string
   type SaveCmd = SaveCmd of string
   type UnloadCmd = UnloadCmd of string
+  type StartCmd = StartCmd of string
+  type StopCmd = StopCmd of string
     
   let add = AddCmd "add"
   let compare = CompareCmd "compare"
@@ -70,21 +72,11 @@ module cmd =
   let restore = RestoreCmd "restore"
   let save = SaveCmd "save"
   let unload = UnloadCmd "unload"
+  let start = StartCmd "start"
+  let stop = StartCmd "stop"
 
-  
   type TraceCtx = TraceCtx of string
-  [<RequireQualifiedAccess>]
-  type TraceCmd =
-    | Start of string
-    | Stop of string
-    member __.value = 
-      match __ with
-      | Start c -> c
-      | Stop c -> c
-
   let trace = TraceCtx "trace"
-  let start = TraceCmd.Start "start"
-  let stop = TraceCmd.Stop "stop"
 
   // https://learn.microsoft.com/ja-jp/windows-server/administration/windows-commands/windows-commands?source=recommendations
   [<System.Runtime.Versioning.SupportedOSPlatform("Windows")>]
@@ -172,12 +164,26 @@ module cmd =
     // TODO
     // https://learn.microsoft.com/ja-jp/windows-server/networking/technologies/netsh/netsh-contexts
     // https://learn.microsoft.com/ja-jp/previous-versions/windows/it-pro/windows-server-2008-R2-and-2008/cc754516(v=ws.10)
-    member __.netsh (state, ctx, cmd, args) = __.exec (state, $"netsh %s{ctx} %s{cmd} %s{build_opt args}")
+    member __.netsh (state, ctx, cmd, args) =
+      __.exec (state, $"netsh %s{ctx} %s{cmd} %s{build_opt args}")
     [<CustomOperation("netsh")>]
-    member __.netsh (state, TraceCtx ctx, cmd: TraceCmd, ?args) = __.netsh(state, ctx, cmd.value, args)
+    member __.netsh (state, ctx: TraceCtx, StartCmd cmd, ?args) =
+      let ctx = match ctx with TraceCtx c -> c
+      __.netsh(state, ctx, cmd, args)
+    [<CustomOperation("netsh")>]
+    member __.netsh (state, ctx: TraceCtx, StopCmd cmd) = 
+      let ctx = match ctx with TraceCtx c -> c
+      __.netsh(state, ctx, cmd, None)
 
     // === O ===
     // === P ===
+    [<CustomOperation("psr")>]
+    member __.psr (state, StartCmd cmd, ?args) =
+      __.exec (state, $"psr /%s{cmd} %s{build_opt args}")
+    [<CustomOperation("psr")>]
+    member __.psr (state, StopCmd cmd) =
+      __.exec (state, $"psr /%s{cmd}")
+
     // === Q ===
     // === R ===
     [<CustomOperation("reg")>]
