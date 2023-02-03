@@ -23,6 +23,12 @@ let c = cmd () {
   netsh trace stop
   psr start ["/output C:\\logs\\psr.zip";"/maxsc 999";"/gui 0"]
   psr stop
+  //dsregcmd "/status"
+  dsregcmd "/status" (.>>) @"C:\logs\dsregcmd.log"
+  gpresult ["/h C:\logs\gpresult.html";"/f"]
+  gpresult ["/z"] (.>>) @"C:\logs\gpresult.log"
+  whoami (.>>) @"C:\logs\whoami.log"
+  cmdkey ["/list"] (.>>) @"C:\logs\whoami.log"
   exit
 }
 c.Result() |> printfn "%s"

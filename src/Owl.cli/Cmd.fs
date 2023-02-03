@@ -138,6 +138,11 @@ module cmd =
     [<CustomOperation("copy")>]
     member __.copy (state, args, src, dst) =
       __.exec (state, $"copy %s{build_arg args} %s{src} %s{dst}")
+      
+    [<CustomOperation("cmdkey")>]      
+    member __.cmdkey (state, args: seq<string>, ?op: op_str, ?dst: string) =
+      let cmd = op |> build_op_str $"cmdkey %s{build_opt (Some args)}" dst
+      __.exec (state, cmd)
 
     // === D ===
     [<CustomOperation("dir")>]
@@ -150,10 +155,32 @@ module cmd =
       let dir = match path with Some p -> $"dir {p}" | None -> "dir"
       let cmd = op |> build_op_cmd dir (combine cmd2 args)
       __.exec (state, cmd)
+    
+    (* DSREGCMD switches
+                        /? : Displays the help message for DSREGCMD
+                   /status : Displays the device join status
+               /status_old : Displays the device join status in old format
+                     /join : Schedules and monitors the Autojoin task to Hybrid Join the device
+                    /leave : Performs Hybrid Unjoin
+                    /debug : Displays debug messages
+               /refreshprt : Refreshes PRT in the CloudAP cache
+          /refreshp2pcerts : Refreshes P2P certificates
+          /cleanupaccounts : Deletes all WAM accounts
+             /listaccounts : Lists all WAM accounts
+             /UpdateDevice : Update device attributes to Azure AD *)
+    [<CustomOperation("dsregcmd")>]      
+    member __.dsregcmd (state, switch, ?op: op_str, ?dst: string) =
+      let cmd = op |> build_op_str $"dsregcmd %s{switch}" dst
+      __.exec (state, cmd)
 
     // === E ===
     // === F ===
     // === G ===
+    [<CustomOperation("gpresult")>]
+    member __.gpresult (state, args: seq<string>, ?op: op_str, ?dst: string ) =
+      let cmd = op |> build_op_str $"gpresult %s{build_opt (Some args)}" dst
+      __.exec (state, cmd)
+
     // === H ===
     // === I ===
     // === J ===
@@ -230,6 +257,16 @@ module cmd =
     // === U ===
     // === V ===
     // === W ===
+    // === G ===
+    [<CustomOperation("whoami")>]
+    member __.whoami (state, ?op: op_str, ?dst: string ) =
+      let cmd = op |> build_op_str $"whoami" dst
+      __.exec (state, cmd)
+    [<CustomOperation("whoami")>]
+    member __.whoami (state, ?args, ?op: op_str, ?dst: string ) =
+      let cmd = op |> build_op_str $"whoami %s{build_opt args}" dst
+      __.exec (state, cmd)
+
     // === X ===
     // === Y ===
     // === Z ===
