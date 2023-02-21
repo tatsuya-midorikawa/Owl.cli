@@ -29,8 +29,13 @@ let c = cmd () {
   gpresult ["/z"] (.>>) @"C:\logs\gpresult.log"
   whoami (.>>) @"C:\logs\whoami.log"
   cmdkey ["/list"] (.>>) @"C:\logs\whoami.log"
+  //schtasks change ["/tn Virus Check"; @"/tr C:\VirusCheck2.exe"]
+  //schtasks create ["/sc hourly"; "/mo 5"; "/sd 03/01/2002"; "/tn My App"; @"/tr c:\apps\myapp.exe"]
+  //schtasks delete ["/tn Start Mail"; "/s Svr16"]
+  //schtasks end' ["/tn \"My Notepad\""]
   schtasks query (.>>) @"C:\logs\whoami.log"
-  schtasks query ["/V"; "/FO"; "/LIST"] (.>>) @"C:\logs\whoami.log"
+  schtasks query ["/V"; "/FO LIST";] (.>>) @"C:\logs\whoami.log"
+  //schtasks run ["/tn Security Script"]
   exit
 }
 c.Result() |> printfn "%s"

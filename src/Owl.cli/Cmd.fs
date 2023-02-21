@@ -71,7 +71,7 @@ module cmd =
   let copy = CopyCmd "copy"
   let create = CreateCmd "create"
   let delete = DeleteCmd "delete"
-  let end' = ExportCmd "end"
+  let end' = EndCmd "end"
   let export = ExportCmd "export"
   let import = ImportCmd "import"
   let load = LoadCmd "load"
@@ -257,6 +257,18 @@ module cmd =
 
     // === S ===
     [<CustomOperation("schtasks")>]
+    member __.schtasks (state, ChangeCmd change, ?args) =
+      __.exec (state, $"schtasks /%s{change} %s{build_opt args}")
+    [<CustomOperation("schtasks")>]
+    member __.schtasks (state, CreateCmd create, ?args) =
+      __.exec (state, $"schtasks /%s{create} %s{build_opt args}")
+    [<CustomOperation("schtasks")>]
+    member __.schtasks (state, DeleteCmd delete, ?args) =
+      __.exec (state, $"schtasks /%s{delete} %s{build_opt args}")
+    [<CustomOperation("schtasks")>]
+    member __.schtasks (state, EndCmd end', ?args) =
+      __.exec (state, $"schtasks /%s{end'} %s{build_opt args}")
+    [<CustomOperation("schtasks")>]
     member __.schtasks (state, QueryCmd query, ?op: op_str, ?dst: string) =
       let cmd = op |> build_op_str $"schtasks /%s{query}" dst
       __.exec (state, cmd)
@@ -264,6 +276,9 @@ module cmd =
     member __.schtasks (state, QueryCmd query, ?args, ?op: op_str, ?dst: string) =
       let cmd = op |> build_op_str $"schtasks /%s{query} %s{build_opt args}" dst
       __.exec (state, cmd)
+    [<CustomOperation("schtasks")>]
+    member __.schtasks (state, RunCmd run, ?args) =
+      __.exec (state, $"schtasks /%s{run} %s{build_opt args}")
     [<CustomOperation("systeminfo")>]
     member __.systeminfo (state, ?op: op_str, ?dst: string) =
       let cmd = op |> build_op_str $"systeminfo" dst
