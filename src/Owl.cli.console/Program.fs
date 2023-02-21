@@ -36,6 +36,7 @@ let c = cmd () {
   schtasks query (.>>) @"C:\logs\whoami.log"
   schtasks query ["/V"; "/FO LIST";] (.>>) @"C:\logs\whoami.log"
   //schtasks run ["/tn Security Script"]
+  wmic ["qfe"; "list";] (.>>) @"C:\logs\qfe.log"
   exit
 }
 c.Result() |> printfn "%s"

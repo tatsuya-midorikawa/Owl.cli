@@ -297,6 +297,11 @@ module cmd =
     member __.whoami (state, ?args, ?op: op_str, ?dst: string ) =
       let cmd = op |> build_op_str $"whoami %s{build_opt args}" dst
       __.exec (state, cmd)
+    [<Obsolete("The WMI command-line (WMIC) utility is deprecated as of Windows 10, version 21H1, and as of the 21H1 semi-annual channel release of Windows Server. This utility is superseded by Windows PowerShell for WMI (see Chapter 7—Working with WMI). This deprecation applies only to the WMI command-line (WMIC) utility; Windows Management Instrumentation (WMI) itself is not affected. Also see Windows 10 features we're no longer developing.")>]
+    [<CustomOperation("wmic")>]
+    member __.wmic (state, ?args, ?op: op_str, ?dst: string ) =
+      let cmd = op |> build_op_str $"wmic %s{build_opt args}" dst
+      __.exec (state, cmd)
 
     // === X ===
     // === Y ===
