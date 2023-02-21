@@ -29,6 +29,8 @@ let c = cmd () {
   gpresult ["/z"] (.>>) @"C:\logs\gpresult.log"
   whoami (.>>) @"C:\logs\whoami.log"
   cmdkey ["/list"] (.>>) @"C:\logs\whoami.log"
+  schtasks query (.>>) @"C:\logs\whoami.log"
+  schtasks query ["/V"; "/FO"; "/LIST"] (.>>) @"C:\logs\whoami.log"
   exit
 }
 c.Result() |> printfn "%s"

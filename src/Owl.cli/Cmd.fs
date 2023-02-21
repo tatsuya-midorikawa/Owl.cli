@@ -48,34 +48,42 @@ module cmd =
   (* <------/// *)
 
   type AddCmd = AddCmd of string
+  type ChangeCmd = ChangeCmd of string
   type CompareCmd = CompareCmd of string
   type CopyCmd = CopyCmd of string
+  type CreateCmd = CreateCmd of string
   type DeleteCmd = DeleteCmd of string
+  type EndCmd = EndCmd of string
   type ExportCmd = ExportCmd of string
   type ImportCmd = ImportCmd of string
   type LoadCmd = LoadCmd of string
   type QueryCmd = QueryCmd of string
   type RestoreCmd = RestoreCmd of string
+  type RunCmd = RunCmd of string
   type SaveCmd = SaveCmd of string
-  type UnloadCmd = UnloadCmd of string
   type StartCmd = StartCmd of string
   type StopCmd = StopCmd of string
+  type UnloadCmd = UnloadCmd of string
     
   let add = AddCmd "add"
+  let change = ChangeCmd "change"
   let compare = CompareCmd "compare"
   let copy = CopyCmd "copy"
+  let create = CreateCmd "create"
   let delete = DeleteCmd "delete"
+  let end' = ExportCmd "end"
   let export = ExportCmd "export"
   let import = ImportCmd "import"
   let load = LoadCmd "load"
   let query = QueryCmd "query"
   let restore = RestoreCmd "restore"
+  let run = RunCmd "run"
   let save = SaveCmd "save"
-  let unload = UnloadCmd "unload"
   let start = StartCmd "start"
   let stop = StartCmd "stop"
-
-  type TraceCtx = TraceCtx of string
+  let unload = UnloadCmd "unload"
+  
+  type TraceCtx = TraceCtx of string  
   let trace = TraceCtx "trace"
 
   // https://learn.microsoft.com/ja-jp/windows-server/administration/windows-commands/windows-commands?source=recommendations
@@ -248,6 +256,14 @@ module cmd =
       __.exec (state, $"reg %s{unloadcmd} \"%s{key}\"")
 
     // === S ===
+    [<CustomOperation("schtasks")>]
+    member __.schtasks (state, QueryCmd query, ?op: op_str, ?dst: string) =
+      let cmd = op |> build_op_str $"schtasks /%s{query}" dst
+      __.exec (state, cmd)
+    [<CustomOperation("schtasks")>]
+    member __.schtasks (state, QueryCmd query, ?args, ?op: op_str, ?dst: string) =
+      let cmd = op |> build_op_str $"schtasks /%s{query} %s{build_opt args}" dst
+      __.exec (state, cmd)
     [<CustomOperation("systeminfo")>]
     member __.systeminfo (state, ?op: op_str, ?dst: string) =
       let cmd = op |> build_op_str $"systeminfo" dst
