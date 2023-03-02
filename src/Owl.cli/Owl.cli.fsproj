@@ -4,6 +4,7 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="PowerShell.fs" />
     <Compile Include="Zsh.fs" />
     <Compile Include="Cmd.fs" />
   </ItemGroup>
