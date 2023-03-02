@@ -97,8 +97,8 @@ module cmd =
     do
       state' <- Running
       prc'.OutputDataReceived.Add (fun e ->
-        if 3L < cnt && ignore'|> Array.contains e.Data |> not && e.Data <> null then 
-          stdout'.AppendLine e.Data |> ignore
+        if 3L < cnt && ignore'|> Array.contains e.Data |> not && e.Data <> null
+          then stdout'.AppendLine e.Data |> ignore
         cnt <- cnt + 1L
       )
       prc'.BeginOutputReadLine()
@@ -106,14 +106,14 @@ module cmd =
     member __.Yield (_) = __
     member __.Result () =
       if state' = Running
-      then __.exit prc' |> ignore
+        then __.exit prc' |> ignore
       task { do! prc'.WaitForExitAsync () } |> Task.WaitAll
       stdout'.ToString()
 
     [<CustomOperation("exec")>]
     member __.exec (_, cmd: string) =
       if state' = Running
-      then task { do! prc'.StandardInput.WriteLineAsync cmd } |> Task.WaitAll
+        then task { do! prc'.StandardInput.WriteLineAsync cmd } |> Task.WaitAll
       __
     [<CustomOperation("exec")>]
     member __.exec (state, Command cmd) =
@@ -121,9 +121,10 @@ module cmd =
 
     [<CustomOperation("exit")>]
     member __.exit (_: obj) =
-      if state' = Running then
-        task { do! prc'.StandardInput.WriteLineAsync "exit" } |> Task.WaitAll
-        state' <- Stop
+      if state' = Running
+        then
+          task { do! prc'.StandardInput.WriteLineAsync "exit" } |> Task.WaitAll
+          state' <- Stop
       __
       
     // === A ===
