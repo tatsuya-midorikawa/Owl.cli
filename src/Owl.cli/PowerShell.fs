@@ -42,7 +42,7 @@ module powershell =
     [<CustomOperation("exec")>]
     member __.exec (_, cmd: string) =
       if state' = Running
-      then task { do! prc'.StandardInput.WriteLineAsync cmd } |> Task.WaitAll
+        then task { do! prc'.StandardInput.WriteLineAsync cmd } |> Task.WaitAll
       __
     [<CustomOperation("exec")>]
     member __.exec (state, Command cmd) =
@@ -55,7 +55,10 @@ module powershell =
           task { do! prc'.StandardInput.WriteLineAsync "exit" } |> Task.WaitAll
           state' <- Stop
       __
-
+      
+    [<CustomOperation("GetWmiObject")>]
+    member __.cd (state, cmd) =
+      __.exec (state, $"Get-WmiObject %s{cmd}")
 
 
     interface IDisposable with
