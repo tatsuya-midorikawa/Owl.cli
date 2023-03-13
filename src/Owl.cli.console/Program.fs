@@ -44,7 +44,8 @@ open System
 
 
 let p = powershell () {
-  GetWmiObject "win32_service"
+  //GetWmiObject "win32_service"
+  exec "ls C:\\logs"
 }
 p.Result() |> printfn "%s"
 

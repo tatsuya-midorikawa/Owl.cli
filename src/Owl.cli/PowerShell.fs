@@ -26,7 +26,8 @@ module powershell =
     do
       state' <- Running
       prc'.OutputDataReceived.Add (fun e ->
-        if 3L < cnt && ignore'|> Array.contains e.Data |> not && e.Data <> null
+        if 3L < cnt && e.Data <> null
+        //if 3L < cnt && ignore'|> Array.contains e.Data |> not && e.Data <> null
           then stdout'.AppendLine e.Data |> ignore
         cnt <- cnt + 1L
       )
