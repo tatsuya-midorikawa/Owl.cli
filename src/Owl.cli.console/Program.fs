@@ -43,10 +43,26 @@ open System
 //c.Result() |> printfn "%s"
 
 
+
+
+
+
+
+
 let p = powershell () {
-  //GetWmiObject "win32_service"
-  exec "ls C:\\logs"
+  exec "ls C:\\logs" into s
+  printfn "%s" s
+  exec "ls C:\\downloads" into s2
+  printfn "%s" s2
 }
-p.Result() |> printfn "%s"
+
+
+
+
+
+
+
+
+
 
 printfn ""

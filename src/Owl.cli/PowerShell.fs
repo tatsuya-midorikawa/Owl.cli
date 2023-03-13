@@ -18,36 +18,32 @@ module powershell =
 
   [<System.Runtime.Versioning.SupportedOSPlatform("Windows")>]
   type PowerShellBuilder () =
-    let ignore' = [| "\f"; "\r"; "\n";  "\r\n"; "";  |]
     let prc' = Process.Start psi'
-    let stdout' = StringBuilder()
     let mutable state' = Stop
-    let mutable cnt = 0L
     do
       state' <- Running
-      prc'.OutputDataReceived.Add (fun e ->
-        if 3L < cnt && e.Data <> null
-        //if 3L < cnt && ignore'|> Array.contains e.Data |> not && e.Data <> null
-          then stdout'.AppendLine e.Data |> ignore
-        cnt <- cnt + 1L
-      )
-      prc'.BeginOutputReadLine()
+      prc'.StandardInput.WriteLine("clear")
+      let mutable s = prc'.StandardOutput.ReadLine()
+      while not <| s.EndsWith "clear" do
+        s <- prc'.StandardOutput.ReadLine()
 
-    member __.Yield (_) = __
-    member __.Result () =
-      if state' = Running
-        then __.exit prc' |> ignore
-      task { do! prc'.WaitForExitAsync () } |> Task.WaitAll
-      stdout'.ToString()
+    member __.Yield (x) = x
+    member __.For (x, f) = f x
+    member __.Zero () = __
       
-    [<CustomOperation("exec")>]
-    member __.exec (_, cmd: string) =
+    [<CustomOperation("exec", AllowIntoPattern=true)>]
+    member __.exec (v, [<ProjectionParameter>] cmd: unit -> string) =
+      let acc = StringBuilder()
       if state' = Running
-        then task { do! prc'.StandardInput.WriteLineAsync cmd } |> Task.WaitAll
-      __
-    [<CustomOperation("exec")>]
-    member __.exec (state, Command cmd) =
-      __.exec (state, cmd)
+        then           
+          prc'.StandardInput.WriteLine (cmd())
+          prc'.StandardInput.WriteLine ("clear")
+          prc'.StandardOutput.ReadLine() |> ignore // Discard command string (cmd()).
+          let mutable s = prc'.StandardOutput.ReadLine()
+          while not <| s.EndsWith "clear" do
+            acc.Append $"{s}{Environment.NewLine}" |> ignore
+            s <- prc'.StandardOutput.ReadLine()
+      acc.ToString()
 
     [<CustomOperation("exit")>]
     member __.exit (_: obj) =
@@ -59,8 +55,7 @@ module powershell =
       
     [<CustomOperation("GetWmiObject")>]
     member __.cd (state, cmd) =
-      __.exec (state, $"Get-WmiObject %s{cmd}")
-
+      __.exec (state, fun () -> $"Get-WmiObject %s{cmd}")
 
     interface IDisposable with
       member __.Dispose() = prc'.Dispose ()
