@@ -6,7 +6,10 @@ module powershell =
   open System.Text
   open System.Threading.Tasks
 
+  [<Literal>]
   let private pwsh' = "powershell"
+  [<Literal>]
+  let private eoc' = "echo \"Owl.cli.console: End of command\""
   let private psi' = ProcessStartInfo (pwsh', 
     // enable commnads input and reading of output
     UseShellExecute = false, RedirectStandardInput = true, RedirectStandardOutput = true,
@@ -37,12 +40,13 @@ module powershell =
       if state' = Running
         then           
           prc'.StandardInput.WriteLine (cmd())
-          prc'.StandardInput.WriteLine ("clear")
-          prc'.StandardOutput.ReadLine() |> ignore // Discard command string (cmd()).
+          prc'.StandardInput.WriteLine (eoc')
+          prc'.StandardOutput.ReadLine() |> ignore // Discard command string (cmd).
           let mutable s = prc'.StandardOutput.ReadLine()
-          while not <| s.EndsWith "clear" do
+          while not <| s.EndsWith eoc' do
             acc.Append $"{s}{Environment.NewLine}" |> ignore
             s <- prc'.StandardOutput.ReadLine()
+          prc'.StandardOutput.ReadLine() |> ignore // Discard command string (echo).
       acc.ToString()
 
     [<CustomOperation("exit")>]
