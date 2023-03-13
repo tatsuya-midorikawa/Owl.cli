@@ -8,6 +8,8 @@ module cmd =
   open System.Threading.Tasks
 
   let private cmd' = Environment.GetEnvironmentVariable "ComSpec"
+  [<Literal>]
+  let private eoc' = "echo \"Owl.cli.console: End of command\""
   let private psi' = ProcessStartInfo (cmd', 
     // enable commnads input and reading of output
     UseShellExecute = false, RedirectStandardInput = true, RedirectStandardOutput = true,
@@ -96,28 +98,52 @@ module cmd =
     let mutable cnt = 0L
     do
       state' <- Running
-      prc'.OutputDataReceived.Add (fun e ->
-        if 3L < cnt && ignore'|> Array.contains e.Data |> not && e.Data <> null
-          then stdout'.AppendLine e.Data |> ignore
-        cnt <- cnt + 1L
-      )
-      prc'.BeginOutputReadLine()
-
-    member __.Yield (_) = __
-    member __.Result () =
+      prc'.StandardInput.WriteLine("clear")
+      let mutable s = prc'.StandardOutput.ReadLine()
+      while not <| s.EndsWith "clear" do
+        s <- prc'.StandardOutput.ReadLine()
+      //prc'.OutputDataReceived.Add (fun e ->
+      //  if 3L < cnt && ignore'|> Array.contains e.Data |> not && e.Data <> null
+      //    then stdout'.AppendLine e.Data |> ignore
+      //  cnt <- cnt + 1L
+      //)
+      //prc'.BeginOutputReadLine()
+      
+    member __.Yield (x) = x
+    member __.For (x, f) = f x
+    member __.Zero () = __
+    //member __.Result () =
+    //  if state' = Running
+    //    then __.exit prc' |> ignore
+    //  task { do! prc'.WaitForExitAsync () } |> Task.WaitAll
+    //  stdout'.ToString()
+      
+      
+    [<CustomOperation("exec", AllowIntoPattern=true)>]
+    member __.exec (v, [<ProjectionParameter>] cmd: unit -> string) =
+      let acc = StringBuilder()
       if state' = Running
-        then __.exit prc' |> ignore
-      task { do! prc'.WaitForExitAsync () } |> Task.WaitAll
-      stdout'.ToString()
+        then           
+          prc'.StandardInput.WriteLine (cmd())
+          prc'.StandardInput.WriteLine (eoc')
+          prc'.StandardOutput.ReadLine() |> ignore // Discard command string (cmd).
+          let mutable s = prc'.StandardOutput.ReadLine()
+          while not <| s.EndsWith eoc' do
+            acc.Append $"{s}{Environment.NewLine}" |> ignore
+            s <- prc'.StandardOutput.ReadLine()
+          prc'.StandardOutput.ReadLine() |> ignore // Discard command string (echo).
+      acc.ToString()
 
-    [<CustomOperation("exec")>]
-    member __.exec (_, cmd: string) =
-      if state' = Running
-        then task { do! prc'.StandardInput.WriteLineAsync cmd } |> Task.WaitAll
-      __
-    [<CustomOperation("exec")>]
-    member __.exec (state, Command cmd) =
-      __.exec (state, cmd)
+    //[<CustomOperation("exec")>]
+    member private __.exec (v, cmd: string) =
+      __.exec(v, fun () -> cmd)
+      //if state' = Running
+      //  then task { do! prc'.StandardInput.WriteLineAsync cmd } |> Task.WaitAll
+      //__
+
+    //[<CustomOperation("exec")>]
+    //member __.exec (state, Command cmd) =
+    //  __.exec (state, cmd)
 
     [<CustomOperation("exit")>]
     member __.exit (_: obj) =
