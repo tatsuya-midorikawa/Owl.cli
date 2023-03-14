@@ -1,4 +1,4 @@
-﻿namespace owl.cli
+﻿namespace Owl.cli
 
 module powershell =
   let private pwsh' = "powershell"

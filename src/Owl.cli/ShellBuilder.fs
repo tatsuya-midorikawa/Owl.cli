@@ -1,4 +1,4 @@
-﻿namespace owl.cli
+﻿namespace Owl.cli
 
 open System
 open System.Diagnostics

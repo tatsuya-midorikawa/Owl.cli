@@ -1,7 +1,7 @@
-namespace owl.cli
+namespace Owl.cli
 
 [<System.Runtime.Versioning.SupportedOSPlatform("MacCatalyst")>]
-module Zsh =
+module zsh =
   open System.Diagnostics
   open System.Text
 

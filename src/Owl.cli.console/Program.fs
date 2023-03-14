@@ -1,6 +1,5 @@
-﻿open owl.cli.cmd
-open owl.cli.powershell
-open System
+﻿open Owl.cli.cmd
+open Owl.cli.powershell
 
 //let c = cmd {
 //  exec ((cd "C:\\") <&&> dir)
@@ -49,13 +48,9 @@ let c = cmd() {
   printfn "%s" s
 }
 
-printfn ""
-
 let p = powershell () {
   exec "ls C:\\logs" into s
   printfn "%s" s
   exec "ls C:\\downloads" into s2
   printfn "%s" s2
 }
-
-printfn ""

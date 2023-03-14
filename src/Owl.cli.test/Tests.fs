@@ -3,7 +3,7 @@ module Tests
 open System
 open System.Diagnostics
 open Xunit
-open owl.cli
+open Owl.cli
 
 [<Literal>]
 let private zsh' = "/Applications/Utilities/Terminal.app/Contents/MacOS/Terminal"
