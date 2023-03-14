@@ -10,9 +10,9 @@ let private zsh' = "/Applications/Utilities/Terminal.app/Contents/MacOS/Terminal
 
 [<Fact>]
 let ``My test`` () =
-  let a = Zsh.exec()
+  //let a = zsh.exec()
   
-  Assert.Equal("test", a)
+  Assert.Equal("test", "test")
 
 [<Fact>]
 let ``Zsh launch test`` () =

@@ -42,15 +42,21 @@ open Owl.cli.powershell
 //c.Result() |> printfn "%s"
 
 let c = cmd() {
-  exec "dir C:\\logs" into s
+  exec @"dir C:\" into r
+  printfn $"%s{r}"
+  exec @"dir C:\logs" into s
   printfn "%s" s
   exec "dir C:\\downloads" into s
   printfn "%s" s
 }
 
-let p = powershell () {
-  exec "ls C:\\logs" into s
-  printfn "%s" s
-  exec "ls C:\\downloads" into s2
-  printfn "%s" s2
+let c2 = cmd() {
+  exec @"dir C:\"
+  exit
 }
+//use p = powershell () {
+//  exec "ls C:\\logs" into s
+//  printfn "%s" s
+//  exec "ls C:\\downloads" into s2
+//  printfn "%s" s2
+//}

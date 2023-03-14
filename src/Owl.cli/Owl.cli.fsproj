@@ -1,7 +1,21 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Version>0.0.1</Version>
+    <Authors>midoliy</Authors>
+    <Company>midoliy</Company>
+    <Copyright>© 2023 Tatsuya Midorikawa. All rights rserved</Copyright>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageTags>midoliy,console,fsharp,Funtom</PackageTags>
+    <PackageProjectUrl>https://github.com/tatsuya-midorikawa/Owl.cli</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/tatsuya-midorikawa/Owl.cli</RepositoryUrl>
+    <Description>
+			Owl.cli is a library to facilitate the use of shell from F#.
+		</Description>
+    <PackageIcon>owl-console.png</PackageIcon>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="ShellBuilder.fs" />
@@ -11,5 +25,15 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="System.Diagnostics.Process" Version="4.1.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\assets\owl-console.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Include="..\..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
   </ItemGroup>
 </Project>

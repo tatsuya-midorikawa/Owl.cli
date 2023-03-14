@@ -22,7 +22,9 @@ type ShellBuilder (psi: ProcessStartInfo, clear'cmd: string) =
 
   member __.Yield (x) = x
   member __.For (x, f) = f x
-  member __.Zero () = output'  
+  member __.Zero () = __  
+
+  member __.Results with get () = output'.ToArray()
     
   [<CustomOperation("exec", AllowIntoPattern=true)>]
   member __.exec (v, [<ProjectionParameter>] cmd: unit -> string) =
@@ -49,7 +51,8 @@ type ShellBuilder (psi: ProcessStartInfo, clear'cmd: string) =
   [<CustomOperation("exit")>]
   member __.exit (state: obj) =
     let ret = __.exec (state, fun () -> "exit")
-    state' <- Stop; ret
+    state' <- Stop;
+    __
 
   interface IDisposable with
-    member __.Dispose() = prc'.Dispose ()
+    member __.Dispose() = __.exit(__); prc'.Dispose ()
