@@ -36,7 +36,7 @@ use c = cmd () {
 }
 ```
 
-#### ▫️ `results` property : array<Output>
+#### ▫️ `results` property : array&lt;Output&gt;
 
 Obtain a pair of executed commands and their results.
 
@@ -81,7 +81,7 @@ use p = powershell () {
 }
 ```
 
-#### ▫️ `results` property : array<Output>
+#### ▫️ `results` property : array&lt;Output&gt;
 
 Obtain a pair of executed commands and their results.
 
