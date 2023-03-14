@@ -24,7 +24,7 @@ type ShellBuilder (psi: ProcessStartInfo, clear'cmd: string) =
   member __.For (x, f) = f x
   member __.Zero () = __  
 
-  member __.Results with get () = output'.ToArray()
+  member __.results with get () = output'.ToArray()
     
   [<CustomOperation("exec", AllowIntoPattern=true)>]
   member __.exec (v, [<ProjectionParameter>] cmd: unit -> string) =

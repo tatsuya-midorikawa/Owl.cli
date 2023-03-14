@@ -36,7 +36,7 @@ use c = cmd () {
 }
 ```
 
-#### ▫️ `Results` property : array<Output>
+#### ▫️ `results` property : array<Output>
 
 Obtain a pair of executed commands and their results.
 
@@ -48,7 +48,7 @@ use c = cmd () {
   exit
 }
 
-c.Results |> Array.iter (printfn "%A")
+c.results |> Array.iter (printfn "%A")
 ```
 
 ### 2️⃣ *powershell* computation expression
@@ -81,7 +81,7 @@ use p = powershell () {
 }
 ```
 
-#### ▫️ `Results` property : array<Output>
+#### ▫️ `results` property : array<Output>
 
 Obtain a pair of executed commands and their results.
 
@@ -93,5 +93,5 @@ use p = powershell () {
   exit
 }
 
-p.Results |> Array.iter (printfn "%A")
+p.results |> Array.iter (printfn "%A")
 ```
