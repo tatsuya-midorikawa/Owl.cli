@@ -55,4 +55,4 @@ type ShellBuilder (psi: ProcessStartInfo, clear'cmd: string) =
     __
 
   interface IDisposable with
-    member __.Dispose() = __.exit(__); prc'.Dispose ()
+    member __.Dispose() = __.exit(__) |> ignore; prc'.Dispose ()
