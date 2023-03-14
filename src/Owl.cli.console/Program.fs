@@ -42,12 +42,14 @@ open System
 //}
 //c.Result() |> printfn "%s"
 
+let c = cmd() {
+  exec "dir C:\\logs" into s
+  printfn "%s" s
+  exec "dir C:\\downloads" into s
+  printfn "%s" s
+}
 
-
-
-
-
-
+printfn ""
 
 let p = powershell () {
   exec "ls C:\\logs" into s
@@ -55,14 +57,5 @@ let p = powershell () {
   exec "ls C:\\downloads" into s2
   printfn "%s" s2
 }
-
-
-
-
-
-
-
-
-
 
 printfn ""
