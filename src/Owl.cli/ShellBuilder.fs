@@ -41,7 +41,7 @@ type ShellBuilder (psi: ProcessStartInfo, clear'cmd: string) =
           s <- prc'.StandardOutput.ReadLine()
         s <- prc'.StandardOutput.ReadLine()
 
-        while not <| s.EndsWith eoc' do
+        while s <> Unchecked.defaultof<_> && not <| s.EndsWith eoc' do
           acc.Append $"{s}{Environment.NewLine}" |> ignore
           s <- prc'.StandardOutput.ReadLine()
         prc'.StandardOutput.ReadLine() |> ignore // Discard command string (echo).

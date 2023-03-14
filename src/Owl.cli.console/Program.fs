@@ -41,19 +41,27 @@ open Owl.cli.powershell
 //}
 //c.Result() |> printfn "%s"
 
-let c = cmd() {
-  exec @"dir C:\" into r
-  printfn $"%s{r}"
-  exec @"dir C:\logs" into s
-  printfn "%s" s
-  exec "dir C:\\downloads" into s
-  printfn "%s" s
-}
+//let c = cmd() {
+//  exec @"dir C:\" into r
+//  printfn $"%s{r}"
+//  exec @"dir C:\logs" into s
+//  printfn "%s" s
+//  exec "dir C:\\downloads" into s
+//  printfn "%s" s
+//}
 
-let c2 = cmd() {
-  exec @"dir C:\"
+let c = cmd() {
+  exec @"mkdir C:\work"
+  exec @"cd C:\work"
+  exec @"fsutil file createnew aaa.txt 1"
+  exec @"dir .\" into dir
+  printfn $"%s{dir}"
   exit
 }
+
+c.results |> Array.iter (printfn "%A")
+
+
 //use p = powershell () {
 //  exec "ls C:\\logs" into s
 //  printfn "%s" s
