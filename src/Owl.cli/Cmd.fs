@@ -20,7 +20,7 @@ module cmd =
   // https://learn.microsoft.com/ja-jp/windows-server/administration/windows-commands/windows-commands?source=recommendations
   [<System.Runtime.Versioning.SupportedOSPlatform("Windows")>]
   type CmdBuilder () =
-    inherit ShellBuilder(psi', "cls")
+    inherit ShellBuilder(psi')
 
   [<System.Runtime.Versioning.SupportedOSPlatform("Windows")>]
   let cmd () = new CmdBuilder()

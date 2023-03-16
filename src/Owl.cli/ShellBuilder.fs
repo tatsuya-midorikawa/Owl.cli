@@ -8,16 +8,16 @@ type Output = { cmd: string; result: string }
 type private state = Stop | Running
 
 [<AbstractClass>]
-type ShellBuilder (psi: ProcessStartInfo, clear'cmd: string) =
+type ShellBuilder (psi: ProcessStartInfo) =
   let eoc' = "echo \"Owl.cli.console: End of command\""
   let output' = ResizeArray<Output>()
   let prc' = Process.Start psi
   let mutable state' = Stop
   do
     state' <- Running
-    prc'.StandardInput.WriteLine(clear'cmd)
+    prc'.StandardInput.WriteLine(eoc')
     let mutable s = prc'.StandardOutput.ReadLine()
-    while not <| s.EndsWith clear'cmd do
+    while s <> Unchecked.defaultof<_> && not <| s.EndsWith eoc' do
       s <- prc'.StandardOutput.ReadLine()
 
   member __.Yield (x) = x
