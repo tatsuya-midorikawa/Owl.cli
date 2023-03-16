@@ -1,5 +1,6 @@
 ﻿open Owl.cli.cmd
 open Owl.cli.powershell
+open Owl.cli.pwsh
 
 //let c = cmd {
 //  exec ((cd "C:\\") <&&> dir)
@@ -50,11 +51,22 @@ open Owl.cli.powershell
 //  printfn "%s" s
 //}
 
-let c = cmd() {
+// let c = cmd() {
+//   //exec @"mkdir C:\work"
+//   //exec @"cd C:\work"
+//   //exec @"fsutil file createnew aaa.txt 1"
+//   exec @"dir .\" into dir
+//   printfn $"%s{dir}"
+//   exit
+// }
+
+// c.results |> Array.iter (printfn "%A")
+
+let c = pwsh() {
   //exec @"mkdir C:\work"
   //exec @"cd C:\work"
   //exec @"fsutil file createnew aaa.txt 1"
-  exec @"dir .\" into dir
+  exec @"ls ./" into dir
   printfn $"%s{dir}"
   exit
 }
