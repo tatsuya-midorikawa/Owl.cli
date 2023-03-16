@@ -21,6 +21,7 @@
     <Compile Include="ShellBuilder.fs" />
     <Compile Include="Cli.fs" />
     <Compile Include="PowerShell.fs" />
+    <Compile Include="Pwsh.fs" />
     <Compile Include="Zsh.fs" />
     <Compile Include="Cmd.fs" />
   </ItemGroup>
