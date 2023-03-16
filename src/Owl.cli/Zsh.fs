@@ -8,7 +8,10 @@ module zsh =
   let private zsh' =
     if RuntimeInformation.IsOSPlatform OSPlatform.OSX
       then "/bin/zsh"
-      else "/usr/bin/zsh"
+    elif RuntimeInformation.IsOSPlatform OSPlatform.Linux
+      then "/usr/bin/zsh"
+    else
+      raise (System.NotSupportedException "Only supports Linux and macOS.")
 
   let private psi' = System.Diagnostics.ProcessStartInfo (zsh', 
     // enable commnads input and reading of output
