@@ -51,9 +51,9 @@ open Owl.cli.powershell
 //}
 
 let c = cmd() {
-  exec @"mkdir C:\work"
-  exec @"cd C:\work"
-  exec @"fsutil file createnew aaa.txt 1"
+  //exec @"mkdir C:\work"
+  //exec @"cd C:\work"
+  //exec @"fsutil file createnew aaa.txt 1"
   exec @"dir .\" into dir
   printfn $"%s{dir}"
   exit
