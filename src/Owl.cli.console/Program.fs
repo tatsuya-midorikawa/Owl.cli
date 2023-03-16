@@ -73,6 +73,12 @@ let c = pwsh() {
 
 c.results |> Array.iter (printfn "%A")
 
+//let f() =
+//  use key = Microsoft.Win32.Registry.LocalMachine
+//  use sub = key.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\pwsh.exe")
+//  if sub = Unchecked.defaultof<_> || sub.GetValue("") = Unchecked.defaultof<_>
+//    then raise (exn "'pwsh' is not installed.")
+//    else sub.GetValue("") |> string
 
 //use p = powershell () {
 //  exec "ls C:\\logs" into s
