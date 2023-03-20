@@ -1,5 +1,9 @@
 ﻿open Owl.cli.cmd
 open Owl.cli.powershell
+open Owl.cli.pwsh
+open Owl.cli.zsh
+open Owl.cli.bash
+open Owl.cli.general
 
 //let c = cmd {
 //  exec ((cd "C:\\") <&&> dir)
@@ -50,17 +54,62 @@ open Owl.cli.powershell
 //  printfn "%s" s
 //}
 
-let c = cmd() {
-  exec @"mkdir C:\work"
-  exec @"cd C:\work"
-  exec @"fsutil file createnew aaa.txt 1"
-  exec @"dir .\" into dir
+// let c = cmd() {
+//   //exec @"mkdir C:\work"
+//   //exec @"cd C:\work"
+//   //exec @"fsutil file createnew aaa.txt 1"
+//   exec @"dir .\" into dir
+//   printfn $"%s{dir}"
+//   exit
+// }
+
+// c.results |> Array.iter (printfn "%A")
+
+// let c = zsh() {
+//   exec @"cd /bin"
+//   exec @"ls ./" into dir
+//   printfn $"%s{dir}"
+//   exit
+// }
+
+// c.results |> Array.iter (printfn "%A")
+
+// let c = bash() {
+//   exec @"cd /bin"
+//   exec @"ls ./" into dir
+//   printfn $"%s{dir}"
+//   exit
+// }
+
+// c.results |> Array.iter (printfn "%A")
+
+let c = cli"/bin/zsh" {
+  exec @"cd /bin"
+  exec @"ls ./" into dir
   printfn $"%s{dir}"
   exit
 }
 
 c.results |> Array.iter (printfn "%A")
 
+// let c = pwsh() {
+//   //exec @"mkdir C:\work"
+//   //exec @"cd C:\work"
+//   //exec @"fsutil file createnew aaa.txt 1"
+//   exec @"cd /bin"
+//   exec @"ls ./" into dir
+//   printfn $"%s{dir}"
+//   exit
+// }
+
+// c.results |> Array.iter (printfn "%A")
+
+//let f() =
+//  use key = Microsoft.Win32.Registry.LocalMachine
+//  use sub = key.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\pwsh.exe")
+//  if sub = Unchecked.defaultof<_> || sub.GetValue("") = Unchecked.defaultof<_>
+//    then raise (exn "'pwsh' is not installed.")
+//    else sub.GetValue("") |> string
 
 //use p = powershell () {
 //  exec "ls C:\\logs" into s

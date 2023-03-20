@@ -1,28 +1,29 @@
 namespace Owl.cli
 
-[<System.Runtime.Versioning.SupportedOSPlatform("MacCatalyst")>]
+open System.Runtime.InteropServices
+
+[<System.Runtime.Versioning.SupportedOSPlatform("macOS")>]
+[<System.Runtime.Versioning.SupportedOSPlatform("Linux")>]
 module zsh =
-  open System.Diagnostics
-  open System.Text
+  let private zsh' =
+    if RuntimeInformation.IsOSPlatform OSPlatform.OSX
+      then "/bin/zsh"
+    elif RuntimeInformation.IsOSPlatform OSPlatform.Linux
+      then "/usr/bin/zsh"
+    else
+      raise (System.NotSupportedException "Only supports Linux and macOS.")
 
-  [<Literal>]
-  let private zsh' = "/bin/zsh"
-  // let private zsh' = "/System/Applications/Utilities/Terminal.app/Contents/MacOS/Terminal"
-
-  let exec (cmds: seq<string>) =
-    use p = 
-      ProcessStartInfo (zsh',
-        UseShellExecute = false,
-        RedirectStandardInput = true,
-        RedirectStandardOutput = true,
-        CreateNoWindow = true)
-      |> System.Diagnostics.Process.Start
-
-    let stdout = StringBuilder()
-      
-    p.OutputDataReceived.Add (fun e -> if e.Data <> null then stdout.AppendLine(e.Data) |> ignore)
-    p.BeginOutputReadLine()
-    cmds |> Seq.iter p.StandardInput.WriteLine
-    p.StandardInput.WriteLine "exit"
-    p.WaitForExit()
-    stdout.ToString()
+  let private psi' = System.Diagnostics.ProcessStartInfo (zsh', 
+    // enable commnads input and reading of output
+    UseShellExecute = false, RedirectStandardInput = true, RedirectStandardOutput = true,
+    // hide console window
+    WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden, CreateNoWindow = true)
+    
+  [<System.Runtime.Versioning.SupportedOSPlatform("macOS")>]
+  [<System.Runtime.Versioning.SupportedOSPlatform("Linux")>]
+  type ZshBuilder () =
+    inherit ShellBuilder(psi')
+  
+  [<System.Runtime.Versioning.SupportedOSPlatform("macOS")>]
+  [<System.Runtime.Versioning.SupportedOSPlatform("Linux")>]
+  let zsh () = new ZshBuilder()

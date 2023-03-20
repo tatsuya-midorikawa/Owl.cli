@@ -9,10 +9,18 @@ module cmd =
     // hide console window
     WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden, CreateNoWindow = true)
 
+  [<RequireQualifiedAccess;NoEquality;NoComparison>]
+  type Cmdline =
+    | mkdir of string
+    | cd of string option
+
+  let mkdir path = Cmdline.mkdir path
+  let cd path = Cmdline.mkdir path
+
   // https://learn.microsoft.com/ja-jp/windows-server/administration/windows-commands/windows-commands?source=recommendations
   [<System.Runtime.Versioning.SupportedOSPlatform("Windows")>]
   type CmdBuilder () =
-    inherit ShellBuilder(psi', "cls")
+    inherit MsshellBuilder(psi')
 
   [<System.Runtime.Versioning.SupportedOSPlatform("Windows")>]
   let cmd () = new CmdBuilder()
