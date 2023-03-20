@@ -3,7 +3,7 @@
     <TargetFramework>net6.0</TargetFramework>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>0.0.1.1</Version>
+    <Version>0.0.2</Version>
     <Authors>midoliy</Authors>
     <Company>midoliy</Company>
     <Copyright>© 2023 Tatsuya Midorikawa. All rights rserved</Copyright>
@@ -25,11 +25,12 @@
     <Compile Include="PowerShell.fs" />
     <Compile Include="Pwsh.fs" />
     <Compile Include="Zsh.fs" />
+    <Compile Include="Bash.fs" />
     <Compile Include="Cmd.fs" />
   </ItemGroup>
-  <ItemGroup>
+  <!-- <ItemGroup>
     <PackageReference Include="System.Diagnostics.Process" Version="4.1.0" />
-  </ItemGroup>
+  </ItemGroup> -->
   <ItemGroup>
     <None Include="..\..\assets\owl-console.png">
       <Pack>True</Pack>
