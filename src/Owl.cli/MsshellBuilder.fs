@@ -6,15 +6,14 @@ open System.Text
 open Owl.cli.common
 
 [<AbstractClass>]
-type ShellBuilder (psi: ProcessStartInfo) =
-  let eoc' = "Owl.cli.console: End of command"
-  let eocmd' = $"echo \"{eoc'}\""
+type MsshellBuilder (psi: ProcessStartInfo) =
+  let eoc' = "echo \"Owl.cli.console: End of command\""
   let output' = ResizeArray<Output>()
   let prc' = Process.Start psi
   let mutable state' = Stop
   do
     state' <- Running
-    prc'.StandardInput.WriteLine(eocmd')
+    prc'.StandardInput.WriteLine(eoc')
     let mutable s = prc'.StandardOutput.ReadLine()
     while s <> Unchecked.defaultof<_> && not <| s.EndsWith eoc' do
       s <- prc'.StandardOutput.ReadLine()
@@ -32,12 +31,18 @@ type ShellBuilder (psi: ProcessStartInfo) =
     if state' = Running
       then           
         prc'.StandardInput.WriteLine (cmd)
-        prc'.StandardInput.WriteLine (eocmd')
+        prc'.StandardInput.WriteLine (eoc')
         let mutable s = prc'.StandardOutput.ReadLine()
+
+        // Discard command string (cmd) logic.
+        while not <| s.EndsWith cmd do
+          s <- prc'.StandardOutput.ReadLine()
+        s <- prc'.StandardOutput.ReadLine()
 
         while s <> Unchecked.defaultof<_> && not <| s.EndsWith eoc' do
           acc.Append $"{s}{Environment.NewLine}" |> ignore
           s <- prc'.StandardOutput.ReadLine()
+        prc'.StandardOutput.ReadLine() |> ignore // Discard command string (echo).
         output'.Add { cmd = cmd; result = acc.ToString() }
     acc.ToString()
 

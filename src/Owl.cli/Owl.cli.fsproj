@@ -18,6 +18,8 @@
     <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="CommonTypes.fs" />
+    <Compile Include="MsshellBuilder.fs" />
     <Compile Include="ShellBuilder.fs" />
     <Compile Include="Cli.fs" />
     <Compile Include="PowerShell.fs" />

@@ -29,7 +29,7 @@ module pwsh =
   [<System.Runtime.Versioning.SupportedOSPlatform("Windows")>]
   [<System.Runtime.Versioning.SupportedOSPlatform("macOS")>]
   type PwshBuilder () =
-    inherit ShellBuilder(psi')
+    inherit MsshellBuilder(psi')
   
   [<System.Runtime.Versioning.SupportedOSPlatform("Windows")>]
   [<System.Runtime.Versioning.SupportedOSPlatform("macOS")>]
