@@ -3,6 +3,7 @@ open Owl.cli.powershell
 open Owl.cli.pwsh
 open Owl.cli.zsh
 open Owl.cli.bash
+open Owl.cli.general
 
 //let c = cmd {
 //  exec ((cd "C:\\") <&&> dir)
@@ -73,7 +74,16 @@ open Owl.cli.bash
 
 // c.results |> Array.iter (printfn "%A")
 
-let c = bash() {
+// let c = bash() {
+//   exec @"cd /bin"
+//   exec @"ls ./" into dir
+//   printfn $"%s{dir}"
+//   exit
+// }
+
+// c.results |> Array.iter (printfn "%A")
+
+let c = cli"/bin/zsh" {
   exec @"cd /bin"
   exec @"ls ./" into dir
   printfn $"%s{dir}"

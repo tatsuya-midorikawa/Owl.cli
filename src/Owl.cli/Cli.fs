@@ -1,6 +1,6 @@
 ﻿namespace Owl.cli
 
-module cli =
+module general =
   type CliBuilder (psi: System.Diagnostics.ProcessStartInfo) =
     inherit ShellBuilder(psi)
     
