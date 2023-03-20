@@ -63,7 +63,19 @@ open Owl.cli.zsh
 
 // c.results |> Array.iter (printfn "%A")
 
-let c = zsh() {
+// let c = zsh() {
+//   exec @"cd /bin"
+//   exec @"ls ./" into dir
+//   printfn $"%s{dir}"
+//   exit
+// }
+
+// c.results |> Array.iter (printfn "%A")
+
+let c = pwsh() {
+  //exec @"mkdir C:\work"
+  //exec @"cd C:\work"
+  //exec @"fsutil file createnew aaa.txt 1"
   exec @"cd /bin"
   exec @"ls ./" into dir
   printfn $"%s{dir}"
@@ -71,17 +83,6 @@ let c = zsh() {
 }
 
 c.results |> Array.iter (printfn "%A")
-
-// let c = pwsh() {
-//   //exec @"mkdir C:\work"
-//   //exec @"cd C:\work"
-//   //exec @"fsutil file createnew aaa.txt 1"
-//   exec @"ls ./" into dir
-//   printfn $"%s{dir}"
-//   exit
-// }
-
-// c.results |> Array.iter (printfn "%A")
 
 //let f() =
 //  use key = Microsoft.Win32.Registry.LocalMachine
