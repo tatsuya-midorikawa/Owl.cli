@@ -3,6 +3,8 @@
 # 🔷 Owl.cli
 
 Owl.cli is a library to facilitate the use of shell from F#.
+This library allows you to execute commands while also retrieving the results.
+It is characterized by the ability to execute commands continuously while preserving context.
 
 ## 🔹 Usage
 
@@ -17,7 +19,8 @@ Use `into` to receive the results.
 open Owl.cli.cmd
 
 use builder = cmd () {
-  exec @"dir C:\" into r
+  exec @"cd C:\"
+  exec @"dir .\" into r
   printfn $"%s{r}"
 }
 ```
@@ -31,7 +34,8 @@ If `exit` is not called, the cmd also exits when the ShellBuilder is disposed.
 open Owl.cli.cmd
 
 use builder = cmd () {
-  exec @"dir C:\"
+  exec @"cd C:\"
+  exec @"dir .\"
   exit
 }
 ```
@@ -44,7 +48,8 @@ Obtain a pair of executed commands and their results.
 open Owl.cli.cmd
 
 use builder = cmd () {
-  exec @"dir C:\"
+  exec @"cd C:\"
+  exec @"dir .\"
   exit
 }
 
@@ -62,7 +67,8 @@ Use `into` to receive the results
 open Owl.cli.powershell
 
 use builder = powershell () {
-  exec @"ls C:\" into r
+  exec @"cd C:\"
+  exec @"ls .\" into r
   printfn $"%s{r}"
 }
 ```
@@ -76,7 +82,8 @@ If `exit` is not called, the powershell also exits when the ShellBuilder is disp
 open Owl.cli.powershell
 
 use builder = powershell () {
-  exec @"ls C:\"
+  exec @"cd C:\"
+  exec @"ls .\"
   exit
 }
 ```
@@ -89,7 +96,8 @@ Obtain a pair of executed commands and their results.
 open Owl.cli.powershell
 
 use builder = powershell () {
-  exec @"ls C:\"
+  exec @"cd C:\"
+  exec @"ls .\"
   exit
 }
 
@@ -107,7 +115,8 @@ Use `into` to receive the results.
 open Owl.cli.pwsh
 
 use builder = pwsh () {
-  exec @"ls /bin" into r
+  exec "cd /bin"
+  exec "ls ./" into r
   printfn $"%s{r}"
 }
 ```
@@ -121,7 +130,8 @@ If `exit` is not called, the pwsh also exits when the ShellBuilder is disposed.
 open Owl.cli.pwsh
 
 use builder = pwsh () {
-  exec @"ls /bin"
+  exec "cd /bin"
+  exec "ls ./"
   exit
 }
 ```
@@ -134,7 +144,8 @@ Obtain a pair of executed commands and their results.
 open Owl.cli.pwsh
 
 use builder = pwsh () {
-  exec @"ls /bin"
+  exec "cd /bin"
+  exec "ls ./"
   exit
 }
 
@@ -152,7 +163,8 @@ Use `into` to receive the results.
 open Owl.cli.zsh
 
 use builder = zsh () {
-  exec @"ls /bin" into r
+  exec "cd /bin"
+  exec "ls ./" into r
   printfn $"%s{r}"
 }
 ```
@@ -166,7 +178,8 @@ If `exit` is not called, the zsh also exits when the ShellBuilder is disposed.
 open Owl.cli.zsh
 
 use builder = zsh () {
-  exec @"ls /bin"
+  exec "cd /bin"
+  exec "ls ./"
   exit
 }
 ```
@@ -179,7 +192,8 @@ Obtain a pair of executed commands and their results.
 open Owl.cli.zsh
 
 use builder = zsh () {
-  exec @"ls /bin"
+  exec "cd /bin"
+  exec "ls ./"
   exit
 }
 
@@ -197,7 +211,8 @@ Use `into` to receive the results.
 open Owl.cli.bash
 
 use builder = bash () {
-  exec @"ls /bin" into r
+  exec "cd /bin"
+  exec "ls ./" into r
   printfn $"%s{r}"
 }
 ```
@@ -211,7 +226,8 @@ If `exit` is not called, the bash also exits when the ShellBuilder is disposed.
 open Owl.cli.bash
 
 use builder = bash () {
-  exec @"ls /bin"
+  exec "cd /bin"
+  exec "ls ./"
   exit
 }
 ```
@@ -224,7 +240,8 @@ Obtain a pair of executed commands and their results.
 open Owl.cli.bash
 
 use builder = bash () {
-  exec @"ls /bin"
+  exec "cd /bin"
+  exec "ls ./"
   exit
 }
 
@@ -246,7 +263,8 @@ Use `into` to receive the results.
 open Owl.cli.general
 
 use builder = cli "/bin/zsh" {
-  exec @"ls /bin" into r
+  exec "cd /bin"
+  exec "ls ./" into r
   printfn $"%s{r}"
 }
 ```
@@ -260,7 +278,8 @@ If `exit` is not called, the cli also exits when the ShellBuilder is disposed.
 open Owl.cli.general
 
 use builder = cli () {
-  exec @"ls /bin"
+  exec "cd /bin"
+  exec "ls ./"
   exit
 }
 ```
@@ -273,7 +292,8 @@ Obtain a pair of executed commands and their results.
 open Owl.cli.general
 
 use builder = cli () {
-  exec @"ls /bin"
+  exec "cd /bin"
+  exec "ls ./"
   exit
 }
 
