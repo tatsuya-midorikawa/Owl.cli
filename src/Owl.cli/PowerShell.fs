@@ -10,7 +10,7 @@ module powershell =
   
   [<System.Runtime.Versioning.SupportedOSPlatform("Windows")>]
   type PowerShellBuilder () =
-    inherit ShellBuilder(psi')
+    inherit MsshellBuilder(psi')
     
   [<System.Runtime.Versioning.SupportedOSPlatform("Windows")>]
   let powershell () = new PowerShellBuilder()

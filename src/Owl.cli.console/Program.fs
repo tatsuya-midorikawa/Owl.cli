@@ -83,24 +83,24 @@ open Owl.cli.general
 
 // c.results |> Array.iter (printfn "%A")
 
-let c = cli"/bin/zsh" {
-  exec @"cd /bin"
-  exec @"ls ./" into dir
-  printfn $"%s{dir}"
-  exit
-}
+//let c = cli "/bin/zsh" {
+//  exec @"cd /bin"
+//  exec @"ls ./" into dir
+//  printfn $"%s{dir}"
+//  exit
+//}
 
-c.results |> Array.iter (printfn "%A")
+//c.results |> Array.iter (printfn "%A")
 
-// let c = pwsh() {
-//   //exec @"mkdir C:\work"
-//   //exec @"cd C:\work"
-//   //exec @"fsutil file createnew aaa.txt 1"
-//   exec @"cd /bin"
-//   exec @"ls ./" into dir
-//   printfn $"%s{dir}"
-//   exit
-// }
+ //let c = pwsh() {
+ //  //exec @"mkdir C:\work"
+ //  //exec @"cd C:\work"
+ //  //exec @"fsutil file createnew aaa.txt 1"
+ //  exec @"cd /bin"
+ //  exec @"ls ./" into dir
+ //  printfn $"%s{dir}"
+ //  exit
+ //}
 
 // c.results |> Array.iter (printfn "%A")
 
@@ -111,9 +111,9 @@ c.results |> Array.iter (printfn "%A")
 //    then raise (exn "'pwsh' is not installed.")
 //    else sub.GetValue("") |> string
 
-//use p = powershell () {
-//  exec "ls C:\\logs" into s
-//  printfn "%s" s
-//  exec "ls C:\\downloads" into s2
-//  printfn "%s" s2
-//}
+let p = powershell () {
+  exec "cd C:\\logs"
+  exec "ls ./" into dir
+  printfn "%s" dir
+  exit
+}
