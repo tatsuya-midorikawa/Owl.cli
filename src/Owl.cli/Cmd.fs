@@ -1,5 +1,4 @@
 ﻿namespace Owl.cli
-namespace Owl.cli
 
 module cmd =
   let private cmd' = System.Environment.GetEnvironmentVariable "ComSpec"
