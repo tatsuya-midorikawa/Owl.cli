@@ -15,7 +15,7 @@ module zsh =
 
   let private psi' = System.Diagnostics.ProcessStartInfo (zsh', 
     // enable commnads input and reading of output
-    UseShellExecute = false, RedirectStandardInput = true, RedirectStandardOutput = true,
+    UseShellExecute = false, RedirectStandardInput = true, RedirectStandardOutput = true, //RedirectStandardError = true,
     // hide console window
     WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden, CreateNoWindow = true)
     

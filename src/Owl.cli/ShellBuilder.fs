@@ -11,9 +11,13 @@ type ShellBuilder (psi: ProcessStartInfo) =
   let eocmd' = $"echo \"{eoc'}\""
   let output' = ResizeArray<Output>()
   let prc' = Process.Start psi
+  let handler = fun (args: DataReceivedEventArgs) ->
+    printfn "### ERR"
+    ()
   let mutable state' = Stop
   do
     state' <- Running
+    prc'.ErrorDataReceived.Add handler
     prc'.StandardInput.WriteLine(eocmd')
     let mutable s = prc'.StandardOutput.ReadLine()
     while s <> Unchecked.defaultof<_> && not <| s.EndsWith eoc' do
@@ -38,6 +42,10 @@ type ShellBuilder (psi: ProcessStartInfo) =
         while s <> Unchecked.defaultof<_> && not <| s.EndsWith eoc' do
           acc.Append $"{s}{Environment.NewLine}" |> ignore
           s <- prc'.StandardOutput.ReadLine()
+
+        // prc'.StandardError.BaseStream.Flush()
+        // prc'.StandardError.BaseStream.Length |> printfn "timeout: %i"
+
         output'.Add { cmd = cmd; result = acc.ToString() }
     acc.ToString()
 

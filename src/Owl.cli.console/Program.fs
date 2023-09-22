@@ -65,14 +65,21 @@ open Owl.cli.general
 
 // c.results |> Array.iter (printfn "%A")
 
-// let c = zsh() {
-//   exec @"cd /bin"
-//   exec @"ls ./" into dir
-//   printfn $"%s{dir}"
-//   exit
-// }
+let c = zsh() {
+  exec @"cd /bin"
+  exec @"ls ./" into dir
+  exit
+}
 
-// c.results |> Array.iter (printfn "%A")
+c.results |> Array.iter (printfn "%A")
+
+let c' = zsh() {
+  exec @"cd C:/bin"
+  exec @"ls ./" into dir
+  exit
+}
+
+c'.results |> Array.iter (printfn "%A")
 
 // let c = bash() {
 //   exec @"cd /bin"
@@ -111,9 +118,9 @@ open Owl.cli.general
 //    then raise (exn "'pwsh' is not installed.")
 //    else sub.GetValue("") |> string
 
-let p = powershell () {
-  exec "cd C:\\logs"
-  exec "ls ./" into dir
-  printfn "%s" dir
-  exit
-}
+// let p = powershell () {
+//   exec "cd C:\\logs"
+//   exec "ls ./" into dir
+//   printfn "%s" dir
+//   exit
+// }
