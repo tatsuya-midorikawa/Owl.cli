@@ -17,7 +17,6 @@ type ShellBuilder (psi: ProcessStartInfo) =
   let mutable state' = Stop
   do
     state' <- Running
-    prc'.ErrorDataReceived.Add handler
     prc'.StandardInput.WriteLine(eocmd')
     let mutable s = prc'.StandardOutput.ReadLine()
     while s <> Unchecked.defaultof<_> && not <| s.EndsWith eoc' do
@@ -48,6 +47,12 @@ type ShellBuilder (psi: ProcessStartInfo) =
 
         output'.Add { cmd = cmd; result = acc.ToString() }
     acc.ToString()
+
+
+  [<CustomOperation("err")>]
+  member __.err (state: obj) =
+    // prc'.StandardError.ReadToEnd() |> printfn "%s"
+    state
 
   [<CustomOperation("exit")>]
   member __.exit (state: obj) =

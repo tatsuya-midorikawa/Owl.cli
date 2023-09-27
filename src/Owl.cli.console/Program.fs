@@ -65,21 +65,16 @@ open Owl.cli.general
 
 // c.results |> Array.iter (printfn "%A")
 
+let err' = System.Console.OpenStandardError();
 let c = zsh() {
-  exec @"cd /bin"
-  exec @"ls ./" into dir
+  err'.Write(System.Text.Encoding.UTF8.GetBytes "### test\r\n")
+  err
+  // exec @"cd /bin"
+  // exec @"ls ./" into dir
   exit
 }
 
 c.results |> Array.iter (printfn "%A")
-
-let c' = zsh() {
-  exec @"cd C:/bin"
-  exec @"ls ./" into dir
-  exit
-}
-
-c'.results |> Array.iter (printfn "%A")
 
 // let c = bash() {
 //   exec @"cd /bin"
